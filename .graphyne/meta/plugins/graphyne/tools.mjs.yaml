@@ -1,0 +1,13 @@
+related:
+  - path: plugins/graphyne/common/mcp-core.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/mcp/instructions.test.mts
+    tags:
+      - test
+  - path: tests/graphyne/mcp/mcp.test.mts
+    tags:
+      - test

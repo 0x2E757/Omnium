@@ -1,0 +1,7 @@
+related:
+  - path: plugins/expertum/common/server-lib.mjs
+    tags:
+      - doc
+  - path: plugins/expertum/server.mjs
+    tags:
+      - doc

@@ -1,0 +1,13 @@
+related:
+  - path: DESIGN.md
+    tags:
+      - spec
+  - path: docs/design/design-code-reviewer.md
+    tags:
+      - spec
+  - path: plugins/graphyne/common/graph.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/yaml-lite.test.mjs
+    tags:
+      - test

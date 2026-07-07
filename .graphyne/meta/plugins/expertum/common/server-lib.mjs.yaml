@@ -1,0 +1,22 @@
+related:
+  - path: plugins/expertum/README.md
+    tags:
+      - doc
+  - path: plugins/expertum/server.mjs
+    tags:
+      - consumer
+  - path: tests/expertum/agent-parity.test.mjs
+    tags:
+      - test
+  - path: tests/expertum/resolve-target-dir.test.mjs
+    tags:
+      - test
+  - path: tests/expertum/sanitize-filename.test.mjs
+    tags:
+      - test
+  - path: tests/expertum/server-stdio.test.mjs
+    tags:
+      - test
+  - path: tests/expertum/write-report.test.mjs
+    tags:
+      - test

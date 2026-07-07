@@ -1,0 +1,7 @@
+related:
+  - path: plugins/memosyne/common/lock.mjs
+    tags:
+      - consumer
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

@@ -1,0 +1,7 @@
+related:
+  - path: plugins/statusline/hooks/hook.mjs
+    tags:
+      - doc
+  - path: plugins/statusline/statusline/render.mjs
+    tags:
+      - doc

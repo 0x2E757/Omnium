@@ -1,0 +1,4 @@
+related:
+  - path: tests/memosyne/instructions.test.mts
+    tags:
+      - test

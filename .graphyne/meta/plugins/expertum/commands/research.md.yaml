@@ -1,0 +1,5 @@
+related:
+  - path: plugins/expertum/commands/conduct.md
+    tags:
+      - command
+      - sibling

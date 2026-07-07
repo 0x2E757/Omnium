@@ -1,0 +1,13 @@
+related:
+  - path: CHANGELOG.md
+    tags:
+      - doc
+  - path: DESIGN.md
+    tags:
+      - doc
+  - path: docs/development.md
+    tags:
+      - doc
+  - path: docs/state-and-troubleshooting.md
+    tags:
+      - doc

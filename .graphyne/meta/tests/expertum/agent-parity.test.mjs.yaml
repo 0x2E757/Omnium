@@ -1,0 +1,25 @@
+related:
+  - path: plugins/expertum/agents/desktop--design.md
+    tags:
+      - test
+  - path: plugins/expertum/agents/desktop-ux--design.md
+    tags:
+      - test
+  - path: plugins/expertum/agents/gamedev--design.md
+    tags:
+      - test
+  - path: plugins/expertum/agents/linux--platform.md
+    tags:
+      - test
+  - path: plugins/expertum/agents/macos--platform.md
+    tags:
+      - test
+  - path: plugins/expertum/agents/mobile-ux--design.md
+    tags:
+      - test
+  - path: plugins/expertum/agents/windows--platform.md
+    tags:
+      - test
+  - path: plugins/expertum/common/server-lib.mjs
+    tags:
+      - test

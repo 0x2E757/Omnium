@@ -1,0 +1,11 @@
+related:
+  - path: plugins/memosyne/common/mcp-schema.mjs
+    tags:
+      - consumer
+      - type
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

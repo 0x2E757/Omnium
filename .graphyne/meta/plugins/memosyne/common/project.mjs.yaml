@@ -1,0 +1,10 @@
+related:
+  - path: plugins/memosyne/handlers.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/memosyne/project.test.mts
+    tags:
+      - test

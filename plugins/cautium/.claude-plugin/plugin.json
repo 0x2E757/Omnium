@@ -1,0 +1,9 @@
+{
+  "name": "cautium",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Always-on security conscience: a single SessionStart hook injects a three-layer primer into every session — universal security duties (secrets, injection-safe input, least-privilege authN/Z, supply-chain and crypto hygiene, never disabling a control), a universal 0-10 change-impact rubric, and an OS-dependent risk mapping keyed on process.platform (Linux calls out /etc, systemd, firewall exposure, fstab/GRUB, rm -rf, SSH; other platforms get their own or a generic mapping). Zero-config, no commands, no state, cross-platform: install it and it applies everywhere.",
+  "author": {
+    "name": "Eric Kevrel"
+  }
+}

@@ -1,0 +1,7 @@
+related:
+  - path: shared/atomic-write.mjs
+    tags:
+      - test
+  - path: shared/lock-core.mjs
+    tags:
+      - test

@@ -1,0 +1,14 @@
+related:
+  - path: docs/design/design-architect-reviewer.md
+    tags:
+      - spec
+  - path: shared/mcp-core.mjs
+    tags:
+      - consumer
+      - type
+  - path: shared/README.md
+    tags:
+      - doc
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

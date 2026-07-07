@@ -1,0 +1,7 @@
+related:
+  - path: plugins/memosyne/instructions.mjs
+    tags:
+      - test
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - test

@@ -1,0 +1,4 @@
+related:
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

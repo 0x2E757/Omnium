@@ -1,0 +1,24 @@
+{
+  "name": "omnium-dev",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Dev/test harness for the Omnium plugins (node:test + tsc typecheck). Not shipped — the installable plugins are plugins/*, which stay zero-dependency.",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.*\"",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "stamp": "node scripts/version-guard.mjs --fix",
+    "sync:shared": "node scripts/sync-shared.mjs",
+    "check": "oxlint && node scripts/version-guard.mjs && node --test \"tests/**/*.test.*\" && tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "24.x",
+    "oxlint": "^1.72.0",
+    "typescript": "5.x"
+  }
+}

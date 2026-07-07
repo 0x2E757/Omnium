@@ -1,0 +1,10 @@
+# Cross-platform EOL policy: scripts/version-guard.mjs hashes working-tree
+# bytes, and graphyne's meta emitter writes byte-exact LF YAML into the
+# committed .graphyne/meta/ — so every text file must check out as LF on
+# every platform, overriding core.autocrlf (git >= 2.10 for text=auto+eol=lf).
+* text=auto eol=lf
+
+# No committed file requires CRLF bytes: the CRLF cases in the parity
+# fixtures are JSON-escaped ("\r\n" inside strings), never raw bytes. If a
+# future fixture ever needs exact non-LF bytes, pin it here with `-text`
+# and extend tests/omnium/eol.test.mjs to match.

@@ -1,0 +1,4 @@
+related:
+  - path: plugins/cautium/hooks/hook-lib.mjs
+    tags:
+      - test

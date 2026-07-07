@@ -1,0 +1,10 @@
+related:
+  - path: scripts/sync-shared.mjs
+    tags:
+      - spec
+  - path: shared/mcp-core.mjs
+    tags:
+      - spec
+  - path: shared/mcp-schema.mjs
+    tags:
+      - spec

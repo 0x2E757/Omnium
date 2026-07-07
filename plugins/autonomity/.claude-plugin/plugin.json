@@ -1,0 +1,9 @@
+{
+  "name": "autonomity",
+  "version": "0.4.5",
+  "license": "MIT",
+  "description": "Per-session autonomous mode (toggle with /autonomity:on|off, /autonomity:status to check, off by default): blocks user-facing prompts (AskUserQuestion), auto-approves plan and tool-permission prompts, and blocks Stop while the git working tree has uncommitted changes.",
+  "author": {
+    "name": "Eric Kevrel"
+  }
+}

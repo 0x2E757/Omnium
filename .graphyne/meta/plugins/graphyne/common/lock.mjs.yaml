@@ -1,0 +1,16 @@
+related:
+  - path: plugins/graphyne/common/lock-core.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/registry.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/session.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/storage.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/common/lock.test.mts
+    tags:
+      - test

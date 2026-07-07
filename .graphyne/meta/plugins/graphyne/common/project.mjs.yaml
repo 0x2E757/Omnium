@@ -1,0 +1,10 @@
+related:
+  - path: plugins/graphyne/hooks/hook.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/common/project.test.mts
+    tags:
+      - test

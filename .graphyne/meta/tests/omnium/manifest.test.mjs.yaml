@@ -1,0 +1,4 @@
+related:
+  - path: scripts/version-guard.mjs
+    tags:
+      - test

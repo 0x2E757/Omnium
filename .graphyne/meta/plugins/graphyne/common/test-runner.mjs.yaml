@@ -1,0 +1,7 @@
+related:
+  - path: plugins/graphyne/handlers.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/common/test-runner.test.mts
+    tags:
+      - test

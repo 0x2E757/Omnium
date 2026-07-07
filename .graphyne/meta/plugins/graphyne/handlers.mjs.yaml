@@ -1,0 +1,34 @@
+related:
+  - path: plugins/graphyne/common/config.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/engine.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/graph-store.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/path-key.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/paths.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/session.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/storage.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/test-runner.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/handlers-projectinfo.test.mts
+    tags:
+      - test
+  - path: tests/graphyne/mcp/mcp.test.mts
+    tags:
+      - test

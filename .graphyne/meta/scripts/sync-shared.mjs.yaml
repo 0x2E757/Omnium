@@ -1,0 +1,16 @@
+related:
+  - path: DESIGN.md
+    tags:
+      - spec
+  - path: docs/design/design-architect-reviewer.md
+    tags:
+      - spec
+  - path: docs/development.md
+    tags:
+      - doc
+  - path: shared/README.md
+    tags:
+      - doc
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

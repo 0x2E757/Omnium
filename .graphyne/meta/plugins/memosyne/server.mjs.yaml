@@ -1,0 +1,31 @@
+related:
+  - path: docs/design/design-ai-engineer.md
+    tags:
+      - spec
+  - path: plugins/memosyne/common/mcp-core.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/project.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/registry.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/storage.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/task.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/zod-validate.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/handlers.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/README.md
+    tags:
+      - doc
+  - path: tests/memosyne/instructions.test.mts
+    tags:
+      - test

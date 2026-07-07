@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/hook.mjs", "SessionStart", "${CLAUDE_PLUGIN_DATA}"],
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

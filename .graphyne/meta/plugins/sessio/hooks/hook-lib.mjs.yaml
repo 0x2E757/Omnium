@@ -1,0 +1,10 @@
+related:
+  - path: plugins/sessio/hooks/hook.mjs
+    tags:
+      - consumer
+  - path: plugins/sessio/README.md
+    tags:
+      - doc
+  - path: tests/sessio/hook-lib.test.mjs
+    tags:
+      - test

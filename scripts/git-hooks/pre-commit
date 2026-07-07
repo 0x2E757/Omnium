@@ -1,0 +1,20 @@
+#!/bin/sh
+# pre-commit — auto-bumps the PATCH version of any plugin whose shipped bytes
+# changed since the last stamp, so the version-keyed install cache can never
+# serve a stale copy (DESIGN.md D8). Enable once per clone with:
+#   git config core.hooksPath scripts/git-hooks
+# Git runs this hook from the repository top level, so paths are relative.
+set -e
+
+node scripts/version-guard.mjs --fix
+
+# Re-stage whatever the guard may have rewritten, guarding each path because
+# during bootstrap no plugin manifests exist yet.
+if [ -f .plugin-versions.json ]; then
+  git add .plugin-versions.json
+fi
+for manifest in plugins/*/.claude-plugin/plugin.json; do
+  if [ -f "$manifest" ]; then
+    git add "$manifest"
+  fi
+done

@@ -1,0 +1,8 @@
+related:
+  - path: plugins/expertum/common/mcp-core.mjs
+    tags:
+      - consumer
+      - type
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

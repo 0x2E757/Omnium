@@ -1,0 +1,46 @@
+related:
+  - path: docs/design/design-ai-engineer.md
+    tags:
+      - spec
+  - path: plugins/graphyne/commands/off.md
+    tags:
+      - doc
+  - path: plugins/graphyne/commands/on.md
+    tags:
+      - doc
+  - path: plugins/graphyne/commands/setup.md
+    tags:
+      - doc
+  - path: plugins/graphyne/commands/status.md
+    tags:
+      - doc
+  - path: plugins/graphyne/common/config.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/deletion.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/engine.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/paths.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/project.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/session.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/storage.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/README.md
+    tags:
+      - doc
+  - path: tests/graphyne/hook/hook.test.mts
+    tags:
+      - test
+  - path: tests/graphyne/mcp/instructions.test.mts
+    tags:
+      - test

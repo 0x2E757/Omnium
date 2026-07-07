@@ -1,0 +1,10 @@
+related:
+  - path: plugins/statusline/hooks/hook.mjs
+    tags:
+      - consumer
+  - path: tests/statusline/dispatch.test.mjs
+    tags:
+      - consumer
+  - path: tests/statusline/hook-lib.test.mjs
+    tags:
+      - test

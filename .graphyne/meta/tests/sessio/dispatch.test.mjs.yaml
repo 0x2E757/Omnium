@@ -1,0 +1,4 @@
+related:
+  - path: plugins/sessio/hooks/hook.mjs
+    tags:
+      - test

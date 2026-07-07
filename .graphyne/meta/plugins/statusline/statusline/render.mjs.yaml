@@ -1,0 +1,13 @@
+related:
+  - path: plugins/statusline/hooks/hook.mjs
+    tags:
+      - consumer
+  - path: plugins/statusline/README.md
+    tags:
+      - doc
+  - path: tests/statusline/dispatch.test.mjs
+    tags:
+      - consumer
+  - path: tests/statusline/render.test.mjs
+    tags:
+      - test

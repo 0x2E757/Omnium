@@ -1,0 +1,13 @@
+related:
+  - path: tests/graphyne/common/lock.test.mts
+    tags:
+      - test
+  - path: tests/memosyne/lock.test.mts
+    tags:
+      - test
+  - path: tests/omnium/atomic-write.test.mjs
+    tags:
+      - test
+  - path: tests/omnium/lock-core.test.mjs
+    tags:
+      - test

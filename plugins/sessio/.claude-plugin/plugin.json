@@ -1,0 +1,9 @@
+{
+  "name": "sessio",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Always-on scratch-file discipline: a single SessionStart hook injects a primer that routes temporary and generated files into a per-task dated subdirectory (<base>/YYYY-MM-DD--<desc>) of a scratch root, instead of scattering them across the working directory, home, or system temp. The root is read from the CLAUDE_SESSIONS_DIR environment variable (user/OS-specific, never hardcoded); when it is unset the primer onboards — it has the agent ask the user for a base directory and persist CLAUDE_SESSIONS_DIR for future sessions. No commands, no state, cross-platform, zero dependencies.",
+  "author": {
+    "name": "Eric Kevrel"
+  }
+}

@@ -1,0 +1,7 @@
+related:
+  - path: plugins/memosyne/common/registry.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/storage.mjs
+    tags:
+      - consumer

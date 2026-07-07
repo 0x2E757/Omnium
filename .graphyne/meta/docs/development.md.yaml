@@ -1,0 +1,19 @@
+related:
+  - path: CONTRIBUTING.md
+    tags:
+      - doc
+  - path: README.md
+    tags:
+      - doc
+  - path: scripts/sync-shared.mjs
+    tags:
+      - doc
+  - path: scripts/version-guard.mjs
+    tags:
+      - doc
+  - path: tests/graphyne/README.md
+    tags:
+      - doc
+  - path: tests/memosyne/README.md
+    tags:
+      - doc

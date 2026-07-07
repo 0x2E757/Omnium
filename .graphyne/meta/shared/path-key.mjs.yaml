@@ -1,0 +1,7 @@
+related:
+  - path: shared/README.md
+    tags:
+      - doc
+  - path: tests/omnium/path-key.test.mjs
+    tags:
+      - test

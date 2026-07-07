@@ -1,0 +1,4 @@
+related:
+  - path: plugins/memosyne/common/cache.mjs
+    tags:
+      - test

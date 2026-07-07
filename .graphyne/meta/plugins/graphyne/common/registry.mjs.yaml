@@ -1,0 +1,16 @@
+related:
+  - path: plugins/graphyne/common/atomic-write.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/lock.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/path-key.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/common/registry.test.mts
+    tags:
+      - test

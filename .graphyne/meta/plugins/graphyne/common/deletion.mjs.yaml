@@ -1,0 +1,7 @@
+related:
+  - path: plugins/graphyne/hooks/hook.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/common/deletion.test.mts
+    tags:
+      - test

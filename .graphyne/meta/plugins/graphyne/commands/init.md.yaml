@@ -1,0 +1,4 @@
+related:
+  - path: plugins/graphyne/common/config.mjs
+    tags:
+      - doc

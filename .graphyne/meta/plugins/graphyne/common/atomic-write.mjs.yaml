@@ -1,0 +1,10 @@
+related:
+  - path: plugins/graphyne/common/registry.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/session.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/storage.mjs
+    tags:
+      - consumer

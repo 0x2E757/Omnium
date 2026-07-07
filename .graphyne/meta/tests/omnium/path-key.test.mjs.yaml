@@ -1,0 +1,4 @@
+related:
+  - path: shared/path-key.mjs
+    tags:
+      - test

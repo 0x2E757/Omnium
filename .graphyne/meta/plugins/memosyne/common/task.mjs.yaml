@@ -1,0 +1,16 @@
+related:
+  - path: plugins/memosyne/common/cache.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/storage.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/handlers.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/memosyne/task.test.mts
+    tags:
+      - test

@@ -1,0 +1,44 @@
+{
+  "name": "omnium",
+  "owner": { "name": "Eric Kevrel" },
+  "metadata": {
+    "description": "Omnium: a marketplace for all seven plugins — autonomity, cautium, expertum, graphyne, memosyne, sessio, statusline — as committed zero-dependency source."
+  },
+  "plugins": [
+    {
+      "name": "autonomity",
+      "source": "./plugins/autonomity",
+      "description": "Hooks that enforce autonomous operation: no user-facing prompts, auto-approved plan/permission prompts, and a clean-git Stop gate. Per-session toggle via /autonomity:on|off|status; off by default."
+    },
+    {
+      "name": "cautium",
+      "source": "./plugins/cautium",
+      "description": "An always-on, zero-config security conscience: a single SessionStart hook injects a three-layer primer into every session — universal security duties (secrets, injection-safe input, least-privilege authN/Z, supply-chain and crypto hygiene), a universal 0-10 change-impact rubric, and an OS-dependent risk mapping keyed on process.platform. No commands, no state, cross-platform."
+    },
+    {
+      "name": "expertum",
+      "source": "./plugins/expertum",
+      "description": "Provides /expertum:review, /expertum:research, /expertum:interview, and /expertum:conduct. Review and research fan the task out to 54 read-only expert analysts that emit one Markdown report each into a per-run .expertum/<timestamp>--<name>/ folder via a bundled zero-dependency MCP server; interview walks the user through questionnaires to turn a vague idea into a pinned brief; conduct adds an autonomous plan->implement->expert-review loop."
+    },
+    {
+      "name": "graphyne",
+      "source": "./plugins/graphyne",
+      "description": "TDD gate (failing-test required before editing gated source) + a bidirectional related-files graph (MCP) with adoption hooks, per git project."
+    },
+    {
+      "name": "memosyne",
+      "source": "./plugins/memosyne",
+      "description": "Session-independent task memory (MCP) + adoption hooks for git projects."
+    },
+    {
+      "name": "sessio",
+      "source": "./plugins/sessio",
+      "description": "An always-on, cross-platform SessionStart hook that routes temporary/generated files into a per-task dated subdirectory (<base>/YYYY-MM-DD--<desc>) of a scratch root read from the CLAUDE_SESSIONS_DIR environment variable; when the var is unset it onboards the user to set it. No commands, no state."
+    },
+    {
+      "name": "statusline",
+      "source": "./plugins/statusline",
+      "description": "Ships a custom, cross-platform Claude Code status line. Since a plugin cannot declare a statusLine itself, a single SessionStart hook copies the self-contained renderer into the persistent per-plugin data dir (stable across version bumps) and nudges the agent to install a one-line statusLine command pointing at it — asking first if a foreign statusLine already exists. The renderer is pure Node built-ins, renders from the status payload on stdin, and fails open. No commands, no state."
+    }
+  ]
+}

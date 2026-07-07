@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2023",
+    "strict": true,
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["plugins/**/*", "shared/**/*", "scripts/**/*", "tests/**/*"],
+  // plugins/memosyne/hooks/hook.mjs is excluded because it is a verbatim
+  // transplant of the prior hook whose EXECUTABLE lines are kept untouched
+  // (only its header comments were updated for Omnium); it carries no JSDoc
+  // types, and adding them would change executable-adjacent bytes for no
+  // behavioral gain. Its behavior is pinned by tests/memosyne/claude.test.mts.
+  "exclude": [
+    "tests/parity/fixtures/**",
+    "plugins/memosyne/hooks/hook.mjs",
+    "node_modules"
+  ]
+}

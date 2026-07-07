@@ -1,0 +1,4 @@
+related:
+  - path: plugins/statusline/statusline/render.mjs
+    tags:
+      - test

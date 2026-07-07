@@ -1,0 +1,10 @@
+related:
+  - path: tests/graphyne/common/project.test.mts
+    tags:
+      - test
+  - path: tests/memosyne/project.test.mts
+    tags:
+      - test
+  - path: tests/omnium/project-canonical.test.mjs
+    tags:
+      - test

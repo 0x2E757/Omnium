@@ -1,0 +1,7 @@
+related:
+  - path: plugins/memosyne/common/lock.mjs
+    tags:
+      - test
+  - path: shared/lock-core.mjs
+    tags:
+      - test

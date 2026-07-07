@@ -1,0 +1,16 @@
+related:
+  - path: plugins/graphyne/common/engine.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/graph-store.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/paths.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/yaml-lite.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/common/graph.test.mts
+    tags:
+      - test

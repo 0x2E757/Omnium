@@ -1,0 +1,10 @@
+{
+  "name": "graphyne",
+  "version": "0.7.15",
+  "license": "MIT",
+  "description": "Enforces a TDD rhythm (failing-test gate on source edits) and maintains a bidirectional graph of related files, so the agent never forgets to update connected files. MCP server (the writer) + adoption hooks.",
+  "author": {
+    "name": "Eric Kevrel"
+  },
+  "mcpServers": "./mcp/servers.json"
+}

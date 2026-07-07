@@ -1,0 +1,4 @@
+related:
+  - path: plugins/memosyne/common/storage.mjs
+    tags:
+      - test

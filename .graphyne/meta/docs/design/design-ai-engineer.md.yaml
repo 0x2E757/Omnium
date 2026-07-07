@@ -1,0 +1,19 @@
+related:
+  - path: plugins/autonomity/hooks/hook.mjs
+    tags:
+      - spec
+  - path: plugins/expertum/server.mjs
+    tags:
+      - spec
+  - path: plugins/graphyne/hooks/hook.mjs
+    tags:
+      - spec
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - spec
+  - path: plugins/memosyne/hooks/hook.mjs
+    tags:
+      - spec
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - spec

@@ -1,0 +1,9 @@
+node_modules/
+.expertum/
+.memosyne/
+*.log
+# Discovery-registry residue: dev-lane server runs write <install root>/data/
+# (the repo root when GRAPHYNE_ROOT/MEMOSYNE_ROOT is unset). Never commit it;
+# the test suites point the registry root at temp dirs.
+data/
+tests/parity/data/

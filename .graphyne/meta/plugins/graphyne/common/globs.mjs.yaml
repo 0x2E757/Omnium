@@ -1,0 +1,16 @@
+related:
+  - path: DESIGN.md
+    tags:
+      - spec
+  - path: docs/design/design-code-reviewer.md
+    tags:
+      - spec
+  - path: plugins/graphyne/common/config.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/paths.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/globs.test.mjs
+    tags:
+      - test

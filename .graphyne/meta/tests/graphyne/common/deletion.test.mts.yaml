@@ -1,0 +1,4 @@
+related:
+  - path: plugins/graphyne/common/deletion.mjs
+    tags:
+      - test

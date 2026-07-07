@@ -1,0 +1,4 @@
+related:
+  - path: tests/expertum/agent-parity.test.mjs
+    tags:
+      - test

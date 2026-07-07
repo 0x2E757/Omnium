@@ -1,0 +1,16 @@
+related:
+  - path: plugins/statusline/hooks/hook-lib.mjs
+    tags:
+      - consumer
+  - path: plugins/statusline/README.md
+    tags:
+      - doc
+  - path: plugins/statusline/statusline/render.mjs
+    tags:
+      - consumer
+  - path: tests/statusline/dispatch.test.mjs
+    tags:
+      - test
+  - path: tests/statusline/hooks-wiring.test.mjs
+    tags:
+      - test

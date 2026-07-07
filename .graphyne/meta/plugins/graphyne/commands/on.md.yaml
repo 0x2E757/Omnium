@@ -1,0 +1,4 @@
+related:
+  - path: plugins/graphyne/hooks/hook.mjs
+    tags:
+      - doc

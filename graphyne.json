@@ -1,0 +1,33 @@
+{
+  "name": "Omnium",
+  "source": ["plugins/**/*.mjs", "shared/**/*.mjs", "scripts/**/*.mjs"],
+  "exclude": [
+    "tests/**",
+    "plugins/*/agents/**",
+    "plugins/*/commands/**",
+    "node_modules/**",
+    "data/**"
+  ],
+  "tests": ["tests/**/*.test.mjs", "tests/**/*.test.mts"],
+  "docs": ["**/*.md"],
+  "specs": ["docs/design/*.md"],
+  "metaExclude": [
+    "**/*.json",
+    "**/*.md",
+    "tests/**",
+    "scripts/git-hooks/**",
+    ".claude-plugin/**"
+  ],
+  "ignore": [
+    "node_modules/**",
+    "data/**",
+    ".memosyne/**",
+    ".expertum/**",
+    "tests/parity/data/**"
+  ],
+  "test": {
+    "file": "node --test {test}",
+    "all": "npm test",
+    "timeoutMs": 300000
+  }
+}

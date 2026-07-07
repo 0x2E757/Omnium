@@ -1,0 +1,4 @@
+related:
+  - path: tests/omnium/atomic-write.test.mjs
+    tags:
+      - test

@@ -1,0 +1,4 @@
+related:
+  - path: plugins/memosyne/hooks/hook.mjs
+    tags:
+      - test

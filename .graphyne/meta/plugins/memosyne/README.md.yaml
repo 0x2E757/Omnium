@@ -1,0 +1,7 @@
+related:
+  - path: plugins/memosyne/hooks/hook.mjs
+    tags:
+      - doc
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - doc

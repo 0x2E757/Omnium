@@ -1,0 +1,10 @@
+related:
+  - path: plugins/graphyne/handlers.mjs
+    tags:
+      - test
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - test
+  - path: plugins/graphyne/tools.mjs
+    tags:
+      - test

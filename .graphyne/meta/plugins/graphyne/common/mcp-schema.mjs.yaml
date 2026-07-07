@@ -1,0 +1,11 @@
+related:
+  - path: plugins/graphyne/common/mcp-core.mjs
+    tags:
+      - consumer
+      - type
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

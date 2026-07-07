@@ -1,0 +1,7 @@
+related:
+  - path: plugins/memosyne/common/project.mjs
+    tags:
+      - test
+  - path: shared/project.mjs
+    tags:
+      - test

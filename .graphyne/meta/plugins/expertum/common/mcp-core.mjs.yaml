@@ -1,0 +1,11 @@
+related:
+  - path: plugins/expertum/common/mcp-schema.mjs
+    tags:
+      - consumer
+      - type
+  - path: plugins/expertum/server.mjs
+    tags:
+      - consumer
+  - path: tests/omnium/vendoring.test.mjs
+    tags:
+      - test

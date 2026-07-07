@@ -1,0 +1,13 @@
+related:
+  - path: plugins/memosyne/common/lock-core.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/registry.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/storage.mjs
+    tags:
+      - consumer
+  - path: tests/memosyne/lock.test.mts
+    tags:
+      - test

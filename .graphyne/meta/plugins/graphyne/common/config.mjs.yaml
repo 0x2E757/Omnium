@@ -1,0 +1,25 @@
+related:
+  - path: plugins/graphyne/commands/init.md
+    tags:
+      - doc
+  - path: plugins/graphyne/common/engine.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/globs.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/paths.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/handlers.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/hooks/hook.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/graphyne/common/config.test.mts
+    tags:
+      - test

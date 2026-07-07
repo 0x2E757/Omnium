@@ -1,0 +1,40 @@
+related:
+  - path: plugins/expertum/common/lock-core.mjs
+    tags:
+      - test
+  - path: plugins/expertum/common/mcp-core.mjs
+    tags:
+      - test
+  - path: plugins/expertum/common/mcp-schema.mjs
+    tags:
+      - test
+  - path: plugins/expertum/common/project.mjs
+    tags:
+      - test
+  - path: plugins/graphyne/common/lock-core.mjs
+    tags:
+      - test
+  - path: plugins/graphyne/common/mcp-core.mjs
+    tags:
+      - test
+  - path: plugins/graphyne/common/mcp-schema.mjs
+    tags:
+      - test
+  - path: plugins/memosyne/common/lock-core.mjs
+    tags:
+      - test
+  - path: plugins/memosyne/common/mcp-core.mjs
+    tags:
+      - test
+  - path: plugins/memosyne/common/mcp-schema.mjs
+    tags:
+      - test
+  - path: scripts/sync-shared.mjs
+    tags:
+      - test
+  - path: shared/mcp-core.mjs
+    tags:
+      - test
+  - path: shared/mcp-schema.mjs
+    tags:
+      - test

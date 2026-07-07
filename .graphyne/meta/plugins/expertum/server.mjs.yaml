@@ -1,0 +1,16 @@
+related:
+  - path: docs/design/design-ai-engineer.md
+    tags:
+      - spec
+  - path: plugins/expertum/common/mcp-core.mjs
+    tags:
+      - consumer
+  - path: plugins/expertum/common/server-lib.mjs
+    tags:
+      - consumer
+  - path: plugins/expertum/README.md
+    tags:
+      - doc
+  - path: tests/expertum/server-stdio.test.mjs
+    tags:
+      - test

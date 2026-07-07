@@ -1,0 +1,7 @@
+related:
+  - path: scripts/version-guard.mjs
+    tags:
+      - consumer
+  - path: tests/omnium/eol.test.mjs
+    tags:
+      - test

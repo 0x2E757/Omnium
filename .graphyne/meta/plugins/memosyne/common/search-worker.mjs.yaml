@@ -1,0 +1,10 @@
+related:
+  - path: plugins/memosyne/common/search-runner.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/search.mjs
+    tags:
+      - consumer
+  - path: tests/memosyne/mcp-handlers.test.mts
+    tags:
+      - test

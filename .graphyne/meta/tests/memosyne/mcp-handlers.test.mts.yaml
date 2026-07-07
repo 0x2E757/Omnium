@@ -1,0 +1,13 @@
+related:
+  - path: plugins/memosyne/common/search-runner.mjs
+    tags:
+      - test
+  - path: plugins/memosyne/common/search-worker.mjs
+    tags:
+      - test
+  - path: plugins/memosyne/common/search.mjs
+    tags:
+      - test
+  - path: plugins/memosyne/handlers.mjs
+    tags:
+      - test

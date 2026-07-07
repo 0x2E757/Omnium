@@ -1,0 +1,10 @@
+related:
+  - path: plugins/cautium/hooks/hook.mjs
+    tags:
+      - consumer
+  - path: plugins/cautium/README.md
+    tags:
+      - doc
+  - path: tests/cautium/hook-lib.test.mjs
+    tags:
+      - test

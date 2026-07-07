@@ -1,0 +1,16 @@
+related:
+  - path: .gitattributes
+    tags:
+      - consumer
+  - path: DESIGN.md
+    tags:
+      - spec
+  - path: docs/design/design-monorepo-architect.md
+    tags:
+      - spec
+  - path: docs/development.md
+    tags:
+      - doc
+  - path: tests/omnium/manifest.test.mjs
+    tags:
+      - test

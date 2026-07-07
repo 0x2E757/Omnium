@@ -1,0 +1,4 @@
+related:
+  - path: plugins/memosyne/common/task.mjs
+    tags:
+      - test

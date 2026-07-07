@@ -1,0 +1,10 @@
+related:
+  - path: docs/design/design-ai-engineer.md
+    tags:
+      - spec
+  - path: plugins/memosyne/README.md
+    tags:
+      - doc
+  - path: tests/memosyne/claude.test.mts
+    tags:
+      - test

@@ -1,0 +1,7 @@
+related:
+  - path: LICENSE
+    tags:
+      - doc
+  - path: plugins/expertum/THIRD-PARTY.md
+    tags:
+      - doc

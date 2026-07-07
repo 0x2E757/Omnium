@@ -1,0 +1,10 @@
+related:
+  - path: plugins/graphyne/common/graph-store.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/common/registry.mjs
+    tags:
+      - consumer
+  - path: plugins/graphyne/handlers.mjs
+    tags:
+      - consumer

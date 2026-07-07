@@ -1,0 +1,22 @@
+related:
+  - path: plugins/memosyne/common/cache.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/project.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/search-runner.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/storage.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/task.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/memosyne/mcp-handlers.test.mts
+    tags:
+      - test

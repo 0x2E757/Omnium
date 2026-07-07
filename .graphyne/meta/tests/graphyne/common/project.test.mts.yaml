@@ -1,0 +1,7 @@
+related:
+  - path: plugins/graphyne/common/project.mjs
+    tags:
+      - test
+  - path: shared/project.mjs
+    tags:
+      - test

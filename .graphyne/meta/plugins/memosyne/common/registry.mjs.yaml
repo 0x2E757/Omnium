@@ -1,0 +1,16 @@
+related:
+  - path: plugins/memosyne/common/atomic-write.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/lock.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/common/path-key.mjs
+    tags:
+      - consumer
+  - path: plugins/memosyne/server.mjs
+    tags:
+      - consumer
+  - path: tests/memosyne/registry.test.mts
+    tags:
+      - test

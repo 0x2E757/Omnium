@@ -1,0 +1,4 @@
+related:
+  - path: tests/parity/fixtures/generators/gen-globs.mjs
+    tags:
+      - doc

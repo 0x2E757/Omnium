@@ -1,0 +1,4 @@
+related:
+  - path: plugins/graphyne/common/globs.mjs
+    tags:
+      - test

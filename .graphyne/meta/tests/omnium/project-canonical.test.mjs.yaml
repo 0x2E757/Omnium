@@ -1,0 +1,4 @@
+related:
+  - path: shared/project.mjs
+    tags:
+      - test

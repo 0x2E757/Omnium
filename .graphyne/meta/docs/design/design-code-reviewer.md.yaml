@@ -1,0 +1,7 @@
+related:
+  - path: plugins/graphyne/common/globs.mjs
+    tags:
+      - spec
+  - path: plugins/graphyne/common/yaml-lite.mjs
+    tags:
+      - spec

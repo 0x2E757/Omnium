@@ -1,0 +1,4 @@
+related:
+  - path: tests/parity/fixtures/README.md
+    tags:
+      - doc
