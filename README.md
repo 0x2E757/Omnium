@@ -15,27 +15,18 @@ byte-for-byte what installs.
 
 ## Install
 
-From a local checkout — clone anywhere, then `cd` into it:
+In a Claude Code session, add the marketplace and install the plugins:
 
 ```
-git clone https://github.com/0x2E757/Omnium.git Omnium
-cd Omnium
-```
-
-Then, in a Claude Code session started in that directory, add the checkout
-as a marketplace and install the plugins:
-
-```
-/plugin marketplace add .
+/plugin marketplace add 0x2E757/Omnium
 /plugin install autonomity@omnium
 /plugin install cautium@omnium
 /plugin install expertum@omnium
 /plugin install graphyne@omnium
 /plugin install memosyne@omnium
 /plugin install sessio@omnium
+/plugin install statusline@omnium
 ```
-
-Once published, skip the clone: `/plugin marketplace add 0x2E757/Omnium`.
 
 ## Developing
 
