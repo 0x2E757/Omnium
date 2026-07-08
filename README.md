@@ -15,10 +15,16 @@ byte-for-byte what installs.
 
 ## Install
 
-In a Claude Code session, add the marketplace and install the plugins:
+In a Claude Code session, add the marketplace:
 
 ```
 /plugin marketplace add 0x2E757/Omnium
+```
+
+Then install the plugins — either interactively by browsing the marketplace
+with `/plugin`, or directly:
+
+```
 /plugin install autonomity@omnium
 /plugin install cautium@omnium
 /plugin install expertum@omnium
