@@ -47,21 +47,32 @@ export function configuredContext(base, date) {
   );
 }
 
-/** Primer when no scratch root is configured yet — onboard the user. */
+/**
+ * Primer when no scratch root is configured yet — onboard the user.
+ *
+ * Framed as an explicit call to action, not a status line: agents were reading
+ * the old "Sessio is installed but not configured…" opener as debug/FYI text and
+ * skipping it. The fixed opener names the agent as the actor, denies the
+ * status-output reading, and makes surfacing this to the user the literal first
+ * step (a real decision — the scratch root — that only the user can make).
+ */
 export const ONBOARD_CONTEXT =
-  "Sessio is installed but not configured: the `" +
+  "Setup action required — this is a directive to you (the agent), not status " +
+  "output: Sessio is installed but has no scratch root — the `" +
   ENV_VAR +
-  "` environment variable is unset, so there is no scratch root for temporary or " +
-  "generated files. Before producing throwaway files, ask the user which base " +
-  "directory they want for session scratch files, then persist that path as `" +
+  "` environment variable is unset — so there is nowhere to route temporary or " +
+  "generated files. First, surface this to the user — in your first reply, tell " +
+  "them Sessio needs a scratch root and ask which base directory they want for " +
+  "session scratch files, then carry on with their actual request. Once you have " +
+  "a path, persist it as `" +
   ENV_VAR +
   "` so it is available in future sessions — set it in Claude Code's settings " +
   "`env` (user or project `settings.json`), which applies cross-platform to the " +
   "session and its hooks (the /update-config skill can do this); an OS or shell " +
   "environment variable works too. Once it is set, generated files go under `<" +
   ENV_VAR +
-  ">/<YYYY-MM-DD>--<short-description>`. Until then, avoid scattering files and " +
-  "tell the user where any unavoidable ones landed.";
+  ">/<YYYY-MM-DD>--<short-description>`. Until then, don't scatter files, and tell " +
+  "the user where any unavoidable ones landed.";
 
 /**
  * The SessionStart hookSpecificOutput: route when configured, else onboard.

@@ -92,14 +92,23 @@ export function statusLineNudge(state, desiredCommand, existingCommand) {
     "should be preferred over editing the file by hand. This is a one-time setup; " +
     "once set, the status line shows on every session.";
 
+  // Fixed directive opener, shared with the sessio onboarding nudge: agents were
+  // reading the old third-person "Statusline … is installed but not active" lead
+  // as debug/FYI and skipping it. Naming the agent as the actor and denying the
+  // status-output reading is what flips it from "info to file" to "act now".
+  const opener =
+    "Setup action required — this is a directive to you (the agent), not status " +
+    "output: ";
+
   if (state === "confirm") {
     return (
+      opener +
       NAME +
-      " (a custom status line) is installed but a different `statusLine` is " +
+      " (a custom status line) is installed, but a different `statusLine` is " +
       "already configured (`" +
       String(existingCommand) +
-      "`). Do NOT overwrite it silently — ASK the user whether they want to " +
-      "switch to " +
+      "`). Surface this to the user and do NOT overwrite it silently — ASK " +
+      "whether they want to switch to " +
       NAME +
       "'s status line. Only if they agree, " +
       target
@@ -107,9 +116,12 @@ export function statusLineNudge(state, desiredCommand, existingCommand) {
   }
 
   return (
+    opener +
     NAME +
-    " (a custom status line) is installed but not active yet — no `statusLine` " +
-    "is configured. To activate it: " +
+    " (a custom status line) is installed but not active — no `statusLine` is " +
+    "configured. First, let the user know you are activating " +
+    NAME +
+    "'s status line, then do it: " +
     target
   );
 }

@@ -20,11 +20,11 @@
     "hash": "3fd6066280121719e1a65289046e456c36c97c72548a6197da2b9d4c3ddd6a84"
   },
   "sessio": {
-    "version": "0.1.0",
-    "hash": "e65449726c6ad1db51de6e987077689269e4c5229fa2ab9bec80f0deab1847eb"
+    "version": "0.1.1",
+    "hash": "725d2952582da7a561e3f33e03ae06b865d51431d17bb76f2e348b38f80352fa"
   },
   "statusline": {
-    "version": "0.1.1",
-    "hash": "d8494fbc7d89d24bfeb1aee501ced32f8023f1e758f46d47a3d7e6d1db2308f7"
+    "version": "0.1.2",
+    "hash": "84f3650e58336589011aed1ba0ca746d8a54c7a6436f045e63f1432855d413f1"
   }
 }

@@ -11,6 +11,15 @@ import {
 // Pure install-decision logic, kept out of the IO shell so it is unit-testable
 // without spawning a process or touching a real settings.json.
 
+// Semantic markers for the "call to action" contract (assert meaning, not exact
+// prose). ACTION_REQUIRED tokens are absent from the pre-reword nudges;
+// REPORT_FIRST excludes "ask"/"tell" (already present) so it is genuinely RED
+// until new report-to-the-user wording lands.
+const ACTION_REQUIRED =
+  /\b(action required|needs? (your )?action|act on this|requires your attention|before you proceed|do not (ignore|skip))\b/i;
+const REPORT_FIRST =
+  /\b(report|surface|raise|flag|inform|notify)\b[^.]{0,40}\buser\b|let the user know|user first/i;
+
 test("NAME is the human-facing plugin name", () => {
   assert.equal(NAME, "Statusline");
 });
@@ -89,6 +98,15 @@ test("install nudge names the plugin, settings.json, the statusLine key, and a v
   );
 });
 
+test("install nudge is a call to action: action-required + report to the user first", () => {
+  const c = statusLineNudge("install", DESIRED, undefined);
+  assert.ok(c);
+  // Not passive status text — it directs the agent to act, and to let the user
+  // know before activating the status line.
+  assert.match(c, ACTION_REQUIRED);
+  assert.match(c, REPORT_FIRST);
+});
+
 test("the value embedded IN the nudge parses back to the statusLine object (not just the fixture)", () => {
   // Pull the backtick-wrapped JSON object out of the actual nudge text and parse
   // THAT — proves the emitted snippet is valid JSON, not a tautology on the fixture.
@@ -105,4 +123,14 @@ test("confirm nudge tells the agent to ASK and shows both commands", () => {
   assert.match(c, /ask/i);
   assert.match(c, /starship prompt/); // the existing (foreign) command
   assert.ok(c.includes(DESIRED_VALUE)); // the valid-JSON value it would become
+});
+
+test("confirm nudge frames the choice as action-required, surfaced to the user first", () => {
+  const c = statusLineNudge("confirm", DESIRED, "starship prompt");
+  assert.ok(c);
+  // Reads as a required action, not skimmable status...
+  assert.match(c, ACTION_REQUIRED);
+  // ...and proactively surfaces the conflict to the user (beyond the /ask/i guard
+  // above), so a reword can't quietly drop the report-first framing.
+  assert.match(c, REPORT_FIRST);
 });
