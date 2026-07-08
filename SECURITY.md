@@ -1,8 +1,8 @@
 # Security Policy
 
-Security policy for the Omnium plugin marketplace (autonomity, cautium,
-expertum, graphyne, memosyne, sessio). These are local Claude Code plugins that
-run on your own machine, inside your own Claude Code session.
+Security policy for the Omnium plugin marketplace and the plugins it ships.
+These are local Claude Code plugins that run on your own machine, inside your
+own Claude Code session.
 
 ## Reporting a vulnerability
 
@@ -25,7 +25,7 @@ backports or maintenance branches.
 
 | Plugin | Supported |
 |--------|-----------|
-| autonomity, cautium, expertum, graphyne, memosyne, sessio | latest only |
+| All plugins | latest only |
 
 ## Security model
 

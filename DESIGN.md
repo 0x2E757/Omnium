@@ -1,11 +1,11 @@
 # Omnium — design record
 
-Omnium is the single local marketplace housing six plugins (autonomity,
-cautium, expertum, graphyne, memosyne, sessio) as committed, zero-dependency,
-human-readable source. This file is the binding decision record; the full
+Omnium is the single local marketplace housing its plugins as committed,
+zero-dependency, human-readable source. This file is the binding decision record; the full
 expert reports it condenses live in `docs/design/`. The four migrated plugins
-below carry a frozen-surface contract from their upstream releases; `cautium`
-(D15) is repo-native and has no such predecessor. The prime directives, in
+below carry a frozen-surface contract from their upstream releases; the
+repo-native plugins (`cautium` D15, `sessio` D16, `statusline`) have no such
+predecessor. The prime directives, in
 priority order:
 
 1. **No breaking changes.** Every user-visible surface of the currently

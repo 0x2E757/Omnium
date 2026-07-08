@@ -69,8 +69,8 @@ errors — so a broken store degrades to "no gate", never to a crash.
 
 ## Uninstall
 
-1. **Remove each plugin:** `/plugin uninstall <name>@omnium` for autonomity,
-   expertum, graphyne, memosyne.
+1. **Remove each plugin:** `/plugin uninstall <name>@omnium` for each plugin you
+   installed.
 2. **Remove the marketplace:** `/plugin marketplace remove omnium`.
 3. **Cache + registry (optional):** delete `~/.claude/plugins/cache/omnium/`;
    this also removes the machine-level `data/registry.json`.

@@ -1,6 +1,6 @@
 # Contributing to Omnium
 
-Omnium is a local marketplace of four zero-dependency, no-build Claude Code
+Omnium is a local marketplace of zero-dependency, no-build Claude Code
 plugins under `plugins/<name>/` — that folder is byte-for-byte what installs.
 Two files are the binding sources of truth and this guide does **not** duplicate
 them: [`DESIGN.md`](DESIGN.md) (decisions + backward-compatibility contract) and

@@ -2,7 +2,7 @@
   "name": "omnium",
   "owner": { "name": "Eric Kevrel" },
   "metadata": {
-    "description": "Omnium: a marketplace for all seven plugins — autonomity, cautium, expertum, graphyne, memosyne, sessio, statusline — as committed zero-dependency source."
+    "description": "Omnium: a local marketplace of Claude Code plugins, shipped as committed zero-dependency source. The plugin roster is the `plugins` array below."
   },
   "plugins": [
     {

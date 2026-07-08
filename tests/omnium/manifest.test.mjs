@@ -25,6 +25,7 @@ import { fileURLToPath } from 'node:url';
 const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const PLUGINS_DIR = join(REPO_ROOT, 'plugins');
 const MARKETPLACE_PATH = join(REPO_ROOT, '.claude-plugin', 'marketplace.json');
+const README_PATH = join(REPO_ROOT, 'README.md');
 
 // Frozen floors: the last versions ever shipped from the old single-plugin
 // marketplaces. Omnium versions must sort strictly after them (DESIGN.md D7).
@@ -163,6 +164,41 @@ test('every plugin.json declares a lowercase kebab-case name matching its direct
       `plugins/${name} declares displayName; Omnium plugins show their lowercase name in the /plugin UI.`,
     );
   }
+});
+
+// The README plugin table and its `/plugin install` block are the ONLY
+// human-facing plugin rosters; marketplace.json's `plugins` array is the
+// machine source of truth. Prose no longer hand-maintains a plugin count or a
+// duplicated name list (they drifted — statusline was once missing from the
+// table). This test is the drift guard: adding a plugin to marketplace.json
+// without adding its README table row and install line (or vice-versa) fails
+// here. Both README rosters are parsed straight from the shipped file.
+const readmeText = readFileSync(README_PATH, 'utf8');
+// Scope the table parse to the plugin table only (its `| Plugin | What it does |`
+// header down to the first blank line), so a second Markdown table added to the
+// README later cannot silently feed rows into this roster.
+const tableStart = readmeText.indexOf('| Plugin | What it does |');
+const pluginTableBlock = tableStart === -1 ? '' : readmeText.slice(tableStart).split('\n\n')[0];
+const readmeTableNames = [...pluginTableBlock.matchAll(/^\| ([a-z0-9-]+) \| /gm)].map((m) => m[1]).sort();
+const readmeInstallNames = [...readmeText.matchAll(/^\/plugin install ([a-z0-9-]+)@omnium\b/gm)]
+  .map((m) => m[1])
+  .sort();
+const marketplaceNames = entries.map((entry) => entry.name).sort();
+
+test('the README plugin table lists exactly the marketplace plugins (no drift)', () => {
+  assert.deepEqual(
+    readmeTableNames,
+    marketplaceNames,
+    'README plugin table and marketplace.json disagree; every plugin needs a table row and only real plugins may appear.',
+  );
+});
+
+test('the README install block lists exactly the marketplace plugins (no drift)', () => {
+  assert.deepEqual(
+    readmeInstallNames,
+    marketplaceNames,
+    'README `/plugin install` block and marketplace.json disagree; every plugin needs an install line.',
+  );
 });
 
 test('version-guard check mode passes (every plugin tree matches its stamp)', () => {
