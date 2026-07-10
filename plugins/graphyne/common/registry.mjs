@@ -28,7 +28,7 @@ import { foldedKeyOf } from "./path-key.mjs";
  * @typedef {object} ProjectMeta
  * @property {string} path
  * @property {string} [id] stable unique short handle (base36), assigned on first upsert
- * @property {string} [name] display name, taken from graphyne.json
+ * @property {string} [name] display name, taken from .graphyne/config.json
  * @property {"git" | "folder"} [kind] undefined = not yet probed
  * @property {string | null} [branch] git branch, or null when detached / no branch
  */

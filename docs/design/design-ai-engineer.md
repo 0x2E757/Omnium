@@ -68,7 +68,7 @@ Every surface below is FROZEN — Omnium must preserve it exactly, because agent
 | C1. `.graphyne/` YAML meta — must be READ and WRITTEN in the frozen format forever (a checkout on plugin 0.1.28 must keep round-tripping stores written by Omnium, and vice versa) | The e2e store-tree byte assertions after write operations; plus the `yaml-roundtrip-real.json` differential fixture — real `meta/**.yaml` samples (flow-style `tags: [test]`, quoted scalars) round-tripped through the vendored parser/serializer and byte-checked against `yaml@2`'s output. |
 | C2. `.memosyne/` markdown tasks + `config.json` + guard files | Same store-tree byte-diff in B3. |
 | C3. `.expertum/<timestamp>--<name>/` report folders (naming pattern, write semantics) | Fixture call to `expertum_write_report` old vs new; diff created paths + file bytes. |
-| C4. `graphyne.json` project config, registry files | Included in fixture repos for B3. |
+| C4. `.graphyne/config.json` project config, registry files | Included in fixture repos for B3. |
 
 ### D. `${CLAUDE_PLUGIN_DATA}` and state files
 

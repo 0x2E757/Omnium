@@ -18,23 +18,26 @@ already is. You add **edges only** via the `graphyne_link` MCP tool — never ha
 2. Call `graphyne_project`. If it reports the project is **not adopted** (no `.graphyne/`),
    STOP and tell the user to run `mkdir .graphyne` at the repo root and restart the
    session — Graphyne is opt-in and does nothing until then.
-3. **Ensure `graphyne.json` exists at the repo root.** It is the per-project config that
+3. **Ensure `.graphyne/config.json` exists.** It is the per-project config that
    tells Graphyne which files the TDD gate guards, which files are tests, and how to run
    them. The expected flow is: the user makes a `.graphyne/` folder, then runs this command
-   — so on a fresh adoption `graphyne.json` is usually **absent** and YOU bootstrap it here.
+   — so on a fresh adoption `.graphyne/config.json` is usually **absent** and YOU bootstrap
+   it here.
 
-   - If `graphyne.json` already exists, read it and skip to step 4.
+   - If `.graphyne/config.json` already exists, read it and skip to step 4.
    - If it's **missing**, generate one from the reference template below:
      1. Inspect the repo to fill the fields with *real* values — don't ship the literal
         example. Look at the layout and tooling: where source lives, the test-file naming
         convention, and the test runner (read `package.json` scripts / dev-deps, or the
         `Cargo.toml` / `pyproject.toml` / `go.mod` etc. equivalent).
-     2. Show the user the `graphyne.json` you propose and the reasoning (which globs, which
-        test command), and ask them to confirm or correct it **before** writing the file.
-     3. Write the confirmed `graphyne.json` to the repo root with the **Write** tool (it is
-        plain project config, not a `.graphyne/` store file, so editing it directly is fine).
+     2. Show the user the `.graphyne/config.json` you propose and the reasoning (which globs,
+        which test command), and ask them to confirm or correct it **before** writing the file.
+     3. Write the confirmed `.graphyne/config.json` with the **Write** tool. It sits inside the
+        `.graphyne/` store, but `config.json` is the one hand-editable file there — the guard
+        notes carve it out — so writing and editing it directly is fine. The meta graph and
+        session state still go only through the MCP tools.
 
-   **Reference `graphyne.json`** (a TypeScript/Node project; adapt every value):
+   **Reference `.graphyne/config.json`** (a TypeScript/Node project; adapt every value):
 
    ```json
    {
@@ -86,7 +89,7 @@ already is. You add **edges only** via the `graphyne_link` MCP tool — never ha
    - **Go**: `"source": ["**/*.go"]`, `"exclude": ["**/*_test.go"]`,
      `"tests": ["**/*_test.go"]`, `"test": { "all": "go test ./..." }`.
 
-4. From the now-present `graphyne.json`, note the globs you'll use in this pass:
+4. From the now-present `.graphyne/config.json`, note the globs you'll use in this pass:
    - `source` − `exclude` → the **gated** files (the ones the TDD gate guards),
    - `tests` → which files are **test** files,
    - `docs` / `specs` → the documentation / specification `.md` files (cover these — see §2),

@@ -1,9 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { withTempRoot } from "../helpers.mts";
+import { configPath } from "../../../plugins/graphyne/common/storage.mjs";
 import {
   readConfig,
   isGatedSource,
@@ -28,9 +29,20 @@ const SAMPLE = {
   test: { file: "npm test -- {test}", all: "npm test" },
 };
 
-function writeConfig(root: string, obj: unknown): void {
-  writeFileSync(join(root, "graphyne.json"), JSON.stringify(obj));
+function writeRawConfig(root: string, text: string): void {
+  mkdirSync(join(root, ".graphyne"), { recursive: true });
+  writeFileSync(join(root, ".graphyne", "config.json"), text);
 }
+
+function writeConfig(root: string, obj: unknown): void {
+  writeRawConfig(root, JSON.stringify(obj));
+}
+
+test("config lives inside the store: .graphyne/config.json", () => {
+  withTempRoot((root) => {
+    assert.equal(configPath(root), join(root, ".graphyne", "config.json"));
+  });
+});
 
 test("missing config -> safe defaults", () => {
   withTempRoot((root) => {
@@ -40,8 +52,25 @@ test("missing config -> safe defaults", () => {
 
 test("malformed config -> defaults, no throw", () => {
   withTempRoot((root) => {
-    writeFileSync(join(root, "graphyne.json"), "{ not json");
+    writeRawConfig(root, "{ not json");
     assert.deepEqual(readConfig(root), { ...DEFAULT_CONFIG });
+  });
+});
+
+test("a root graphyne.json is inert: no fallback to the pre-0.8.0 location", () => {
+  withTempRoot((root) => {
+    writeFileSync(join(root, "graphyne.json"), JSON.stringify(SAMPLE));
+    assert.deepEqual(readConfig(root), { ...DEFAULT_CONFIG });
+  });
+});
+
+test("the store config wins outright over a stray root graphyne.json", () => {
+  withTempRoot((root) => {
+    writeFileSync(join(root, "graphyne.json"), JSON.stringify({ ...SAMPLE, name: "OLD", source: ["legacy/**"] }));
+    writeConfig(root, SAMPLE);
+    const c = readConfig(root);
+    assert.equal(c.name, "Demo");
+    assert.deepEqual(c.source, ["src/**/*.ts"]);
   });
 });
 
@@ -54,7 +83,18 @@ test("isGatedSource respects source/exclude and store exemption", () => {
     assert.equal(isGatedSource(c, "src/foo.d.ts"), false); // excluded
     assert.equal(isGatedSource(c, "README.md"), false); // not source
     assert.equal(isGatedSource(c, ".graphyne/meta/x.yaml"), false); // store
-    assert.equal(isGatedSource(c, "graphyne.json"), false); // config
+    assert.equal(isGatedSource(c, ".graphyne/config.json"), false); // config, exempt via .graphyne/**
+  });
+});
+
+test("the store config is exempt on every axis, purely via the .graphyne/** glob", () => {
+  withTempRoot((root) => {
+    writeConfig(root, { ...SAMPLE, source: ["**/*"], docs: ["**/*"], metaExclude: [] });
+    const c = readConfig(root);
+    assert.equal(isIgnored(c, ".graphyne/config.json"), true);
+    assert.equal(isGatedSource(c, ".graphyne/config.json"), false);
+    assert.equal(needsMeta(c, ".graphyne/config.json"), false);
+    assert.equal(isDocFile(c, ".graphyne/config.json"), false);
   });
 });
 
@@ -74,7 +114,9 @@ test("needsMeta excludes store/config and metaExclude", () => {
     assert.equal(needsMeta(c, "src/foo.ts"), true);
     assert.equal(needsMeta(c, "CHANGELOG.md"), false); // metaExclude, not a doc/spec
     assert.equal(needsMeta(c, ".graphyne/x"), false);
-    assert.equal(needsMeta(c, "graphyne.json"), false);
+    assert.equal(needsMeta(c, ".graphyne/config.json"), false);
+    // A leftover root graphyne.json is an ordinary tracked file now — nothing exempts it.
+    assert.equal(needsMeta(c, "graphyne.json"), true);
   });
 });
 
@@ -98,7 +140,7 @@ test("isDocFile matches its globs, exempt store/config", () => {
     assert.equal(isDocFile(c, "README.md"), true); // root-level doc, matched natively
     assert.equal(isDocFile(c, "docs/guide.md"), true);
     assert.equal(isDocFile(c, "auth.spec.md"), false); // that's a spec
-    assert.equal(isDocFile(c, "graphyne.json"), false); // config exempt
+    assert.equal(isDocFile(c, ".graphyne/config.json"), false); // config exempt
     assert.equal(isDocFile(c, ".graphyne/meta/x.yaml"), false); // store exempt
   });
 });

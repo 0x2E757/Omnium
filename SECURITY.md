@@ -36,7 +36,7 @@ sandbox and grant nothing you could not already do. Be aware:
   stores in `.graphyne/` and `.memosyne/`), path-contained to project subtrees.
 - Child processes they spawn: `git` (argv form, no shell) and a Node worker for
   memosyne search. **graphyne additionally runs the test command from a repo's
-  own `graphyne.json`**, at the same trust level as `npm test` — only enable
+  own `.graphyne/config.json`**, at the same trust level as `npm test` — only enable
   graphyne in repositories you trust.
 - **autonomity** is opt-in and off by default; its guardrails are best-effort,
   not a containment boundary.

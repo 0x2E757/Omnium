@@ -28,8 +28,9 @@ function unlinkOnDisk(root: string, rel: string): void {
 
 /** A config that also classifies docs/specs, for the doc/spec gate tests. */
 function setupDocs(root: string): ReturnType<typeof readConfig> {
+  mkdirSync(join(root, ".graphyne"), { recursive: true });
   writeFileSync(
-    join(root, "graphyne.json"),
+    join(root, ".graphyne", "config.json"),
     JSON.stringify({
       source: ["src/**/*.ts"],
       exclude: ["**/*.test.ts"],
@@ -44,8 +45,9 @@ function setupDocs(root: string): ReturnType<typeof readConfig> {
 }
 
 function setup(root: string): ReturnType<typeof readConfig> {
+  mkdirSync(join(root, ".graphyne"), { recursive: true });
   writeFileSync(
-    join(root, "graphyne.json"),
+    join(root, ".graphyne", "config.json"),
     JSON.stringify({
       source: ["src/**/*.ts"],
       exclude: ["**/*.test.ts"],
@@ -579,8 +581,9 @@ test("onEdit: editing a SPEC hard-flags the code that must conform", () => {
 
 test("onEdit treats ignored files as invisible: no record, no neighbor flags", () => {
   withTempRoot((root) => {
+    mkdirSync(join(root, ".graphyne"), { recursive: true });
     writeFileSync(
-      join(root, "graphyne.json"),
+      join(root, ".graphyne", "config.json"),
       JSON.stringify({
         source: ["src/**/*.ts"],
         tests: ["**/*.test.ts"],

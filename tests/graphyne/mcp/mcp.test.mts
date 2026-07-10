@@ -25,12 +25,12 @@ import { onEdit } from "../../../plugins/graphyne/common/engine.mjs";
 // The shipped server entry point (the .mjs the plugin runs), not a dev-tree .mts.
 const SERVER = fileURLToPath(new URL("../../../plugins/graphyne/server.mjs", import.meta.url));
 
-// A temp project (with .graphyne + graphyne.json) for direct handler unit tests.
+// A temp project (a .graphyne/ store holding config.json) for direct handler unit tests.
 function tempProject(): string {
   const root = mkdtempSync(join(tmpdir(), "graphyne-h-"));
   mkdirSync(join(root, ".graphyne"), { recursive: true });
   writeFileSync(
-    join(root, "graphyne.json"),
+    join(root, ".graphyne", "config.json"),
     JSON.stringify({
       source: ["src/**/*.ts"],
       exclude: ["**/*.test.ts"],
@@ -47,7 +47,7 @@ function tempProjectDocs(): string {
   const root = mkdtempSync(join(tmpdir(), "graphyne-h-"));
   mkdirSync(join(root, ".graphyne"), { recursive: true });
   writeFileSync(
-    join(root, "graphyne.json"),
+    join(root, ".graphyne", "config.json"),
     JSON.stringify({
       source: ["src/**/*.ts"],
       exclude: ["**/*.test.ts"],
@@ -197,7 +197,7 @@ function projectWithTest(testCmd: { file?: string; all?: string; timeoutMs?: num
   const root = mkdtempSync(join(tmpdir(), "graphyne-h-"));
   mkdirSync(join(root, ".graphyne"), { recursive: true });
   writeFileSync(
-    join(root, "graphyne.json"),
+    join(root, ".graphyne", "config.json"),
     JSON.stringify({
       source: ["src/**/*.ts"],
       exclude: ["**/*.test.ts"],

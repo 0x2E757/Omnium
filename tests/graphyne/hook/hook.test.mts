@@ -28,7 +28,7 @@ function makeProject(): string {
   const root = mkdtempSync(join(tmpdir(), "graphyne-hook-"));
   mkdirSync(join(root, ".graphyne"), { recursive: true });
   writeFileSync(
-    join(root, "graphyne.json"),
+    join(root, ".graphyne", "config.json"),
     JSON.stringify({
       source: ["src/**/*.ts"],
       exclude: ["**/*.test.ts"],

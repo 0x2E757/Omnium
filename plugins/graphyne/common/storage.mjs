@@ -1,11 +1,15 @@
 // Per-project storage under `<repoRoot>/.graphyne/`.
 //
 //   <repoRoot>/.graphyne/
-//     .gitignore                  # ignores tasks/ (meta/ is committed)
+//     .gitignore                  # ignores tasks/ (the rest is committed)
 //     AGENTS.md, CLAUDE.md        # guard notes: don't hand-edit, use the MCP
+//     config.json                 # per-project config — the ONE hand-editable file
 //     meta/                       # the graph — one <srcPath>.yaml per file, COMMITTED
 //       src/foo.ts.yaml
 //     tasks/<session-id>/         # session-scoped state — NOT committed
+//
+// Everything Graphyne knows about a project lives under this one directory, so it
+// can be relocated out of the tree (a symlink) as a single unit.
 //
 // A node's source path is derived from its meta file's location: strip the
 // meta/ prefix and the trailing ".yaml". Every function takes the project root
@@ -23,10 +27,15 @@ export const GRAPHYNE_DIR = ".graphyne";
 export const META_SUBDIR = "meta";
 export const TASKS_SUBDIR = "tasks";
 export const META_EXT = ".yaml";
+export const CONFIG_JSON = "config.json";
 
 /** @param {string} root */
 export function storeDir(root) {
   return join(root, GRAPHYNE_DIR);
+}
+/** @param {string} root */
+export function configPath(root) {
+  return join(storeDir(root), CONFIG_JSON);
 }
 /** @param {string} root */
 export function metaDir(root) {
@@ -132,20 +141,26 @@ export const GITIGNORE_CONTENT = `\
 # Graphyne session state — local to each session, never committed.
 ${TASKS_SUBDIR}/
 `;
+// Whether the rest of the store is committed is the project's call: the graph is
+// shareable, but a store may also be kept local (or symlinked out of the tree).
 
 export const GUARD_FILENAMES = /** @type {const} */ (["AGENTS.md", "CLAUDE.md"]);
 
 export const GUARD_CONTENT = `\
 # .graphyne/ — managed by Graphyne
 
-This directory is the Graphyne plugin's store. \`meta/\` is the committed graph of
-related files; \`tasks/\` is per-session state (gitignored).
+This directory is the Graphyne plugin's store. \`config.json\` is the per-project
+config; \`meta/\` is the committed graph of related files; \`tasks/\` is per-session
+state (gitignored).
 
-Do NOT hand-edit these files. Work with the graph EXCLUSIVELY through the Graphyne
+\`config.json\` is the ONE hand-editable file here — plain project config (the
+source/test/doc globs and the test commands), so editing it directly is fine.
+
+Do NOT hand-edit anything else. Work with the graph EXCLUSIVELY through the Graphyne
 MCP tools (graphyne_neighbors, graphyne_meta, graphyne_link, graphyne_unlink, …)
 and the session state through graphyne_checklist / graphyne_review / graphyne_test.
-Hand-editing risks corrupting the on-disk schema and bypasses the bidirectional
-link invariant the tools maintain.
+Hand-editing the graph or session state risks corrupting the on-disk schema and
+bypasses the bidirectional link invariant the tools maintain.
 `;
 
 /**

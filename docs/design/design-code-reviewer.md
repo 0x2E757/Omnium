@@ -14,7 +14,7 @@ All three dependencies sit behind narrow, fully enumerable contracts: `yaml` is 
 
 - `Graphyne/src/common/graph.mts` (parseMeta 85-109, serializeMeta 113-119, cleanTags 35-44), `graph-store.mts` (readMeta cache 43-59), `storage.mts` (META_EXT 24, readMetaRaw 75-79, listMetaSources 95-104), `paths.mts`, `globs.mts`, `config.mts` (ALWAYS_EXEMPT 68; call sites 111/126/137/144/151/162), `DESIGN.md` (meta schema §2, glob/YAML stack rows), `src/claude/plugin/commands/init.md` (documented glob dialect).
 - All committed meta YAML in both stores (67 files in Graphyne, ~40 in Memosyne) — enumerated feature inventory.
-- `Graphyne/graphyne.json`, `Memosyne/graphyne.json` (the only two adopted stores under ~/projects; no other `.graphyne/` exists).
+- `Graphyne/.graphyne/config.json`, `Memosyne/.graphyne/config.json` (the only two adopted stores under ~/projects; no other `.graphyne/` exists).
 - `Memosyne/src/mcp/handlers.mts:578-632` (patchTask), `server.mts:389-414` (schema), `pnpm-lock.yaml:1014` (`diff@9.0.0` exact).
 - Upstream: jsdiff v9.0.0 `libesm/patch/parse.js` + `apply.js` (unpkg), picomatch README + issue #21, eemeli yaml docs (see Sources at end).
 
@@ -92,7 +92,7 @@ Generic `parseYamlLite(raw: string): unknown` (parseMeta's structure/type checks
 ### Why vendored, not `path.matchesGlob`
 
 - `compile()` passes `{dot: true}` (`globs.mts:15`). `path.matchesGlob` exposes no options; under minimatch defaults `node_modules/**` stops matching `node_modules/.bin/esbuild`, `**/*.md` stops matching `.claude/notes.md` → `isIgnored`/`needsMeta`/`isGatedSource` (`config.mts:111,137,158`) silently change verdicts for dot-dir paths → the TDD gate and Stop-blockers change behavior. A "dot-handling wrapper" cannot fix this without rewriting patterns (`**` → `{**,**/.*/**,…}` expansion is exactly the kind of cleverness the readability charter forbids), and `matchesGlob` is still marked experimental (stability 1) — an API-stability risk in a zero-dep plugin meant to outlive Node minor versions.
-- Verified syntax inventory — nothing beyond `**`, `*`, literals appears in: both `graphyne.json` files, `ALWAYS_EXEMPT` (`config.mts:68` — `.graphyne/**`, `graphyne.json`), and every documented example (`init.md:40-46,77-82`: `spec/**/*.md`, `**/*_test.py`, `**/*_test.go`, `plugin/**`; DESIGN.md:98 `pnpm-lock.yaml` literal). `?` appears nowhere but costs one line — support it since picomatch did and third-party configs may exist.
+- Verified syntax inventory — nothing beyond `**`, `*`, literals appears in: both `.graphyne/config.json` files, `ALWAYS_EXEMPT` (`config.mts:68` — `.graphyne/**`, which subsumes the in-store config), and every documented example (`init.md:40-46,77-82`: `spec/**/*.md`, `**/*_test.py`, `**/*_test.go`, `plugin/**`; DESIGN.md:98 `pnpm-lock.yaml` literal). `?` appears nowhere but costs one line — support it since picomatch did and third-party configs may exist.
 
 ### THE semantics table (normative for implementation AND tests)
 
@@ -126,7 +126,7 @@ Inputs: path is already `normalizeRel`'d (`globs.mts:16` — keep that call); pa
 
 ### Tests
 
-1. The 17-row table above as unit cases (each row ≥1 assert), plus every pattern from both real `graphyne.json` files against representative real paths (e.g. `metaExclude: tests/**` vs `tests/common/graph.test.mts`; `ignore: .claude/**` vs `.claude/settings.json`).
+1. The 17-row table above as unit cases (each row ≥1 assert), plus every pattern from both real `.graphyne/config.json` files against representative real paths (e.g. `metaExclude: tests/**` vs `tests/common/graph.test.mts`; `ignore: .claude/**` vs `.claude/settings.json`).
 2. **Differential fixture run (definition of done):** one-off script executed in `the upstream Graphyne source` (picomatch@4 installed) evaluating `picomatch(p, {dot:true})` vs the vendored matcher for: all patterns from both configs + `ALWAYS_EXEMPT` + init.md examples, × a corpus of every tracked file path in both repos plus synthesized dot-variants (`.bin/x`, `a/.b/c.md`, bare `tests`). Zero disagreements required; fixture table committed to Omnium and replayed in CI-less `node --test`.
 3. Resilience (recommended, non-blocking): `readConfig` may log a one-line stderr warning when a pattern contains `{ } [ ] ( ) !` — observability for the unsupported-syntax case without any behavior change.
 
@@ -198,7 +198,7 @@ Unit cases (each asserting result string OR `false` OR exact throw message):
 
 - **YAML Tier-2 quoting** deviates in byte form from eemeli for pathological filenames (number-lookalike or `: `-containing paths) — semantic parity holds; a mixed-version checkout touching such a file could see one-line quote-style churn. Accepted; probability ≈ 0 in real repos.
 - **Exotic hand-edited YAML** (anchors, block scalars) reads as empty under the subset where eemeli read it — bounded to explicitly-forbidden hand edits (guard files, `storage.mts:115-126`).
-- **Unsupported glob punctuation** in third-party `graphyne.json` files ( `{}`, `[]`, `!` ) silently becomes literal. Verified absent in the only two adopted stores; stderr warning recommended for observability.
+- **Unsupported glob punctuation** in third-party `.graphyne/config.json` files ( `{}`, `[]`, `!` ) silently becomes literal. Verified absent in the only two adopted stores; stderr warning recommended for observability.
 - **jsdiff port drift**: any deviation is caught only by the differential fixture suite — that suite is therefore a merge gate, not optional.
 
 ## Recommendations (prioritized)

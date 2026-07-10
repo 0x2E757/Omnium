@@ -17,6 +17,20 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ## graphyne
 
+### 0.8.0 — 2026-07-10
+- **BREAKING:** the per-project config moved from `<repoRoot>/graphyne.json` to
+  `<repoRoot>/.graphyne/config.json`, so everything Graphyne keeps for a project
+  lives in one directory that can be relocated out of the tree (a symlink) as a
+  single unit — mirroring `.memosyne/config.json`. A `graphyne.json` at the repo
+  root is no longer read, and there is no fallback. Migration:
+  `git mv graphyne.json .graphyne/config.json` (adopt the project first if
+  `.graphyne/` does not exist yet). The `.graphyne/` guard notes now carve
+  `config.json` out as the one hand-editable file in the store; already-adopted
+  projects can delete `.graphyne/AGENTS.md` and `.graphyne/CLAUDE.md` to have the
+  new text regenerated. Note that a `graphyne.json` left at the root is no longer
+  exempt from classification — delete it, or cover it with a `metaExclude` glob,
+  or Graphyne will ask it to carry a meta entry.
+
 ### 0.7.11 — 2026-07-06
 - Consolidated into the Omnium marketplace (baseline; supersedes the standalone 0.1.28 line).
 

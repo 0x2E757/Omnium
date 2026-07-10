@@ -21,7 +21,7 @@
 
 export const GRAPHYNE_INSTRUCTIONS = `Graphyne enforces two disciplines in THIS project; Stop is BLOCKED until graphyne_checklist is clear.
 
-1) TDD GATE. Files under graphyne.json's source globs are editable ONLY while a covering test is failing. Rhythm: graphyne_link(path: <src>, related: <test>, tags: ["test"]) -> write/adjust the test -> run graphyne_test, see it RED -> edit <src> -> graphyne_test GREEN (after RED->GREEN the file stays editable for refactoring). ALWAYS run tests via graphyne_test, never raw Bash — that is how red/green is recorded.
+1) TDD GATE. Files under .graphyne/config.json's source globs are editable ONLY while a covering test is failing. Rhythm: graphyne_link(path: <src>, related: <test>, tags: ["test"]) -> write/adjust the test -> run graphyne_test, see it RED -> edit <src> -> graphyne_test GREEN (after RED->GREEN the file stays editable for refactoring). ALWAYS run tests via graphyne_test, never raw Bash — that is how red/green is recorded.
 
 2) RELATED-FILES GRAPH. Every edited file needs a meta entry (.graphyne/meta/<path>.yaml) of UNDIRECTED edges with up to 5 one-word tags (test, consumer, type, doc, spec, ...) — graphyne_link writes both sides, graphyne_unlink removes. Editing a file flags its neighbors: edit each, or mark it graphyne_review, before the turn ends. After each edit also reconcile the file's OWN relations, then call graphyne_meta_confirm on it (empty confirm OK; MANDATORY, re-armed by every edit).
 
@@ -164,7 +164,7 @@ export const TOOL_DEFINITIONS = [
   {
     "name": "graphyne_test",
     "title": "Run tests",
-    "description": "Run tests via the commands in graphyne.json and record red/green (exit 0 = green). Pass `test` (a test file) to drive the TDD gate for the source it covers; or `all: true` to run the whole suite. Returns the FULL test output. ALWAYS run tests through this, not raw Bash.",
+    "description": "Run tests via the commands in .graphyne/config.json and record red/green (exit 0 = green). Pass `test` (a test file) to drive the TDD gate for the source it covers; or `all: true` to run the whole suite. Returns the FULL test output. ALWAYS run tests through this, not raw Bash.",
     "inputSchema": {
       "type": "object",
       "properties": {

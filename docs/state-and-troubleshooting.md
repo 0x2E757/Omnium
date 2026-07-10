@@ -9,7 +9,7 @@ a git repo); one store is kept per repo regardless of subdirectory.
 
 | Plugin | What | Path | Format | Lifetime | Git | Safe to delete |
 |--------|------|------|--------|----------|-----|----------------|
-| graphyne | Config | `<repoRoot>/graphyne.json` | JSON | project | commit | no — it is the config |
+| graphyne | Config | `<repoRoot>/.graphyne/config.json` | JSON | project | project’s call | no — it is the config |
 | graphyne | Related-files graph | `<repoRoot>/.graphyne/meta/<src>.yaml` | YAML | project | commit | no — it is the graph |
 | graphyne | Store gitignore + guard notes | `<repoRoot>/.graphyne/{.gitignore,AGENTS.md,CLAUDE.md}` | text | project | commit | regenerated |
 | graphyne | Session state | `<repoRoot>/.graphyne/tasks/<session>/*.json` | JSON | per session | gitignored | yes — loses this session's TDD/checklist |
@@ -74,7 +74,7 @@ errors — so a broken store degrades to "no gate", never to a crash.
 2. **Remove the marketplace:** `/plugin marketplace remove omnium`.
 3. **Cache + registry (optional):** delete `~/.claude/plugins/cache/omnium/`;
    this also removes the machine-level `data/registry.json`.
-4. **Per-project state (optional):** `graphyne.json`, `.graphyne/meta/` and
+4. **Per-project state (optional):** `.graphyne/` (config + graph) and
    `.memosyne/*.md` are committed *content* — delete only to abandon the graph or
    the hand-off memory. `.graphyne/tasks/`, `.expertum/`, every `*.lock`, and the
    nudge counters are pure runtime and always safe to delete.

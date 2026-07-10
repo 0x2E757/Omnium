@@ -2,6 +2,9 @@ related:
   - path: plugins/graphyne/common/atomic-write.mjs
     tags:
       - consumer
+  - path: plugins/graphyne/common/config.mjs
+    tags:
+      - consumer
   - path: plugins/graphyne/common/engine.mjs
     tags:
       - consumer

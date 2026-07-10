@@ -21,3 +21,13 @@ test("projectInfo Store line defaults to the native join", () => {
   const out = projectInfo("demo", "/srv/repo", cfg);
   assert.match(out, /^Store: \/srv\/repo\/\.graphyne$/m);
 });
+
+test("projectInfo names the config by its in-store path, never the retired root file", () => {
+  const empty = projectInfo("demo", "/srv/repo", cfg);
+  assert.match(empty, /^Config: no \.graphyne\/config\.json \(TDD gate inactive\)$/m);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loaded = projectInfo("demo", "/srv/repo", { ...cfg, source: ["src/**"] } as any);
+  assert.match(loaded, /^Config: \.graphyne\/config\.json loaded$/m);
+  assert.ok(!loaded.includes("graphyne.json loaded"), "must not name the pre-0.8.0 root config");
+});

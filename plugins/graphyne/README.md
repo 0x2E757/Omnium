@@ -20,15 +20,19 @@ hooks stay silent — Graphyne looks uninstalled.
 
 ## Store & config
 
+Everything Graphyne keeps for a project lives under one directory, so it can be
+relocated out of the tree (a symlink) as a single unit.
+
+- `.graphyne/config.json` — project config: `source`/`exclude`/`tests`/`docs`/
+  `specs`/`metaExclude`/`ignore` globs and the `test.file`/`test.all` commands
+  (plus optional `test.timeoutMs` — per-run cap, default 10 minutes, so a
+  hanging test command can't wedge the serial MCP queue). The one file in the
+  store meant to be hand-edited.
 - `.graphyne/meta/<path>.yaml` — one meta file per node, COMMITTED. Undirected
   edges with 1–5 one-word tags each; `graphyne_link` writes both sides.
 - `.graphyne/tasks/<session-id>/` — session state (edited files, red/green,
   checklist, grants, stop-block chain markers, the `/graphyne:off` mute),
   gitignored.
-- `graphyne.json` — project config: `source`/`exclude`/`tests`/`docs`/`specs`/
-  `metaExclude`/`ignore` globs and the `test.file`/`test.all` commands
-  (plus optional `test.timeoutMs` — per-run cap, default 10 minutes, so a
-  hanging test command can't wedge the serial MCP queue).
 
 The YAML store format and the glob dialect are frozen compat surfaces: the
 vendored subset parser/emitter (`common/yaml-lite.mjs`, `common/graph.mjs`) is

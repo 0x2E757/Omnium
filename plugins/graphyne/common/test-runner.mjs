@@ -1,10 +1,10 @@
 // Runs a project's test command and reports the raw result. Graphyne owns the
-// red/green signal by running the tests ITSELF (via the commands in graphyne.json)
+// red/green signal by running the tests ITSELF (via the commands in .graphyne/config.json)
 // rather than parsing someone else's logs or trusting a self-report: exit code 0
 // is green, anything else is red. The FULL combined output is handed back to the
 // agent, so it sees the run exactly as if it had run the command directly.
 //
-// Every run is bounded by a timeout (test.timeoutMs in graphyne.json, or the
+// Every run is bounded by a timeout (test.timeoutMs in .graphyne/config.json, or the
 // generous default below): the MCP server processes requests serially, so a
 // hanging test command would otherwise wedge the whole queue for the session.
 
@@ -52,7 +52,7 @@ export function runTest(root, command, options = {}) {
   if (timedOut) {
     output +=
       `\n[graphyne] test run TIMED OUT after ${timeoutMs}ms and was killed ` +
-      `(processes it spawned may still be running). Raise test.timeoutMs in graphyne.json ` +
+      `(processes it spawned may still be running). Raise test.timeoutMs in .graphyne/config.json ` +
       `if the suite legitimately needs longer.`;
     // A trap handler can convert the kill into a clean exit 0 — the timeout
     // verdict must win, so a timed-out run is never green.

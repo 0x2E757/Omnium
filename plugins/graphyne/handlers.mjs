@@ -66,7 +66,7 @@ export function projectInfo(name, root, config, pathJoin = join) {
     `Root: ${root}\n` +
     `Store: ${pathJoin(root, ".graphyne")}\n` +
     `Meta files (graph nodes): ${graphSize}\n` +
-    `Config: ${hasConfig ? "graphyne.json loaded" : "no graphyne.json (TDD gate inactive)"}\n` +
+    `Config: ${hasConfig ? ".graphyne/config.json loaded" : "no .graphyne/config.json (TDD gate inactive)"}\n` +
     `  source: ${config.source.join(", ") || "(none)"}\n` +
     `  tests:  ${config.tests.join(", ") || "(none)"}\n` +
     `  test.file: ${config.test.file ?? "(unset)"} | test.all: ${config.test.all ?? "(unset)"}`
@@ -156,7 +156,7 @@ export function forget(root, sessionId, input) {
 export function runTests(root, config, sessionId, input, now) {
   if (input.all) {
     const cmd = testAllCommand(config);
-    if (!cmd) throw new ToolError('No "test.all" command in graphyne.json. Add one, or pass a specific `test` file.');
+    if (!cmd) throw new ToolError('No "test.all" command in .graphyne/config.json. Add one, or pass a specific `test` file.');
     const run = runTest(root, cmd, { timeoutMs: config.test.timeoutMs });
     const verdict = run.exitCode === 0 ? "GREEN (exit 0)" : `RED (exit ${run.exitCode})`;
     return (
@@ -172,7 +172,7 @@ export function runTests(root, config, sessionId, input, now) {
     // off test files, so a non-test path won't unblock a source edit.
   }
   const cmd = testFileCommand(config, test);
-  if (!cmd) throw new ToolError('No "test.file" command in graphyne.json (e.g. "npm test -- {test}"). Add one to run a single test.');
+  if (!cmd) throw new ToolError('No "test.file" command in .graphyne/config.json (e.g. "npm test -- {test}"). Add one to run a single test.');
 
   const run = runTest(root, cmd, { timeoutMs: config.test.timeoutMs });
   /** @type {TestResult} */
@@ -220,7 +220,7 @@ export function refactor(root, config, sessionId, input, now) {
     const reds = [];
     for (const t of covering) {
       const cmd = testFileCommand(config, t);
-      if (!cmd) throw new ToolError('No "test.file" command in graphyne.json (e.g. "node --test {test}").');
+      if (!cmd) throw new ToolError('No "test.file" command in .graphyne/config.json (e.g. "node --test {test}").');
       const run = runTest(root, cmd, { timeoutMs: config.test.timeoutMs });
       /** @type {TestResult} */
       const result = run.exitCode === 0 ? "green" : "red";
@@ -246,7 +246,7 @@ export function refactor(root, config, sessionId, input, now) {
   const cmd = testAllCommand(config);
   if (!cmd) {
     throw new ToolError(
-      `${path} has no covering test and graphyne.json has no "test.all" command. Declare a covering ` +
+      `${path} has no covering test and .graphyne/config.json has no "test.all" command. Declare a covering ` +
         `test edge (graphyne_link tags ["test"]) or add a test.all command to verify a green suite.`,
     );
   }
@@ -314,7 +314,7 @@ export function bypass(root, config, sessionId, input, now) {
     const tests = f.tests.map((t) => rel(root, t, "test"));
     for (const t of tests) {
       if (!testFileCommand(config, t)) {
-        throw new ToolError('No "test.file" command in graphyne.json (e.g. "node --test {test}") — cannot run the declared tests.');
+        throw new ToolError('No "test.file" command in .graphyne/config.json (e.g. "node --test {test}") — cannot run the declared tests.');
       }
     }
     entries.push({ path, tests, reason });

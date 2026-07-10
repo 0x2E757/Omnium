@@ -14,6 +14,9 @@ import {
   ensureStore,
   storeDir,
   metaDir,
+  configPath,
+  CONFIG_JSON,
+  GUARD_CONTENT,
   GUARD_FILENAMES,
 } from "../../../plugins/graphyne/common/storage.mjs";
 
@@ -47,6 +50,25 @@ test("listMetaSources walks recursively, strips .yaml, posix", () => {
     writeMetaRaw(root, "src/a.ts", "related: []\n");
     writeMetaRaw(root, "src/sub/b.ts", "related: []\n");
     assert.deepEqual(listMetaSources(root), ["src/a.ts", "src/sub/b.ts"]);
+  });
+});
+
+test("configPath resolves the config inside the store", () => {
+  withTempRoot((root) => {
+    assert.equal(CONFIG_JSON, "config.json");
+    assert.equal(configPath(root), join(storeDir(root), CONFIG_JSON));
+  });
+});
+
+test("the guard carves config.json out of the do-not-hand-edit rule", () => {
+  assert.match(GUARD_CONTENT, /`config\.json` is the ONE hand-editable file/);
+  assert.match(GUARD_CONTENT, /Do NOT hand-edit anything else/);
+});
+
+test("ensureStore does not seed a config.json (/graphyne:init writes it)", () => {
+  withTempRoot((root) => {
+    ensureStore(root);
+    assert.equal(existsSync(configPath(root)), false);
   });
 });
 

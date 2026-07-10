@@ -73,7 +73,7 @@ stores depend on today's behavior.
 
 Accepted security trade-off (documented decision, not an unknown): the vendored
 glob compiler (`plugins/graphyne/common/globs.mjs`) compiles `*` to a
-backtracking `[^/]*`, so a pathological `graphyne.json` pattern (a long run of
+backtracking `[^/]*`, so a pathological `.graphyne/config.json` glob (a long run of
 `*a*a*…`) can cost polynomial regex backtracking on the hook's hot path. This
 is the SAME complexity class the prior picomatch bundle had — nothing new was
 introduced — and its impact is bounded: matched paths are short tool-input file

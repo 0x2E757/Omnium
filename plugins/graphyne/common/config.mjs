@@ -1,5 +1,6 @@
-// Per-project config at `<repoRoot>/graphyne.json` (committed). It declares the
-// test commands Graphyne runs and the globs that classify files:
+// Per-project config at `<repoRoot>/.graphyne/config.json`. It lives inside the
+// store so everything Graphyne keeps for a project is one relocatable directory.
+// It declares the test commands Graphyne runs and the globs that classify files:
 //
 //   {
 //     "name": "My Project",
@@ -20,12 +21,10 @@
 // crashes the server or hook (it just disables gating).
 
 import { readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
 
 import { matchesAny } from "./globs.mjs";
 import { normalizeRel, isShellSafeRel } from "./paths.mjs";
-
-export const CONFIG_FILENAME = "graphyne.json";
+import { GRAPHYNE_DIR, configPath } from "./storage.mjs";
 
 /**
  * `timeoutMs` caps a single test run (the runner applies its own generous
@@ -66,14 +65,10 @@ export const DEFAULT_CONFIG = {
   test: {},
 };
 
-// Graphyne's own store and config are ALWAYS ignored: never project source, never
-// classified, never required to carry meta — regardless of the user's globs.
-const ALWAYS_EXEMPT = [".graphyne/**", CONFIG_FILENAME];
-
-/** @param {string} root */
-export function configPath(root) {
-  return join(root, CONFIG_FILENAME);
-}
+// Graphyne's own store is ALWAYS ignored: never project source, never classified,
+// never required to carry meta — regardless of the user's globs. The config lives
+// inside the store, so this one glob covers it too.
+const ALWAYS_EXEMPT = [`${GRAPHYNE_DIR}/**`];
 
 /**
  * @param {unknown} v

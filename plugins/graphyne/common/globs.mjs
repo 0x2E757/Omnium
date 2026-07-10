@@ -15,7 +15,7 @@
 // - `**` inside a segment (`foo**bar`, `a**`) is just `*` — globstar only
 //   works as a whole segment;
 // - unsupported punctuation (`{a,b}`, `[abc]`, `!(x)`, …) matches LITERALLY
-//   (§Q4 row 16) — verified absent from every real graphyne.json;
+//   (§Q4 row 16) — verified absent from every real .graphyne/config.json;
 // - there is NO dot-file special-casing anywhere: `{dot: true}` means that
 //   absence IS the semantics.
 

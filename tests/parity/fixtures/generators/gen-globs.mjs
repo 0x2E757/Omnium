@@ -37,9 +37,13 @@ function configPatterns(configPath) {
 const patterns = [
   ...new Set([
     // Both real configs (source/exclude/ignore/tests/docs/specs/metaExclude — all fields).
+    // The reference checkouts predate graphyne 0.8.0, so their config is still the
+    // root graphyne.json; a checkout on 0.8.0+ keeps it at .graphyne/config.json.
     ...configPatterns((process.env.REF_GRAPHYNE_DIR ?? "/path/to/graphyne-checkout") + "/graphyne.json"),
     ...configPatterns((process.env.REF_MEMOSYNE_DIR ?? "/path/to/memosyne-checkout") + "/graphyne.json"),
-    // ALWAYS_EXEMPT (Graphyne src/common/config.mts:68).
+    // ALWAYS_EXEMPT (Graphyne src/common/config.mts:68) — since 0.8.0 that is
+    // `.graphyne/**` alone. The bare `graphyne.json` literal stays in the corpus as
+    // the §Q4 row-15 literal/anchored fixture; dropping it would shrink globs.json.
     ".graphyne/**",
     "graphyne.json",
     // init.md documented examples.

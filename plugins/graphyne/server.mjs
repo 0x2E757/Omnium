@@ -47,7 +47,7 @@ function root() {
   return project.path;
 }
 function config() {
-  return readConfig(root()); // re-read each call so graphyne.json edits take effect live
+  return readConfig(root()); // re-read each call so .graphyne/config.json edits take effect live
 }
 function session() {
   return currentSession(root()); // the hook records the active session; may change on resume

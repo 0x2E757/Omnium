@@ -12,8 +12,8 @@
     "hash": "573286920c70fd52b87fdb3c5260919b306a74bf8a89022c4b9d2312bd2a2186"
   },
   "graphyne": {
-    "version": "0.7.15",
-    "hash": "e6f5071aeee95ea84e3b18531aea5d64a6a6df15a1e80c6dd430bfd8b9aba3fc"
+    "version": "0.8.0",
+    "hash": "884db9d10cccd1fabe7e20245ea7db07b034afa2f26cb077cd83c49c4e655ec1"
   },
   "memosyne": {
     "version": "0.4.3",
