@@ -9,7 +9,8 @@ just advise — it delivers a change. You orchestrate four phases: experts
 **plan**, you **reconcile** their plans, you **implement**, then experts
 **review** in a loop until they are satisfied. The analysts stay READ-ONLY and
 only write reports; **every code change is made by you**, the main agent, using
-your Edit/Write/Bash tools.
+your Edit/Write/Bash tools. For a deliberately minimal build, prefer
+`/expertum:conduct-mvp` — the same loop under a strict MVP contract.
 
 ## 1. Determine the task
 

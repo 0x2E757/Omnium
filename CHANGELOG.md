@@ -12,6 +12,14 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ## expertum
 
+### 0.8.0 — 2026-07-18
+- Added `/expertum:conduct-mvp`: a sibling of `/expertum:conduct` that plans and
+  builds only the minimal implementation of the ask under a binding MVP
+  contract — review rounds (capped at 3) block only on bugs and one-way-door
+  design choices, and speculative security/performance hardening is deferred
+  into a `deferred.md` backlog (recorded, not built) that a later full-rigor
+  `/expertum:conduct` run can pick up.
+
 ### 0.4.14 — 2026-07-06
 - Consolidated into the Omnium marketplace (baseline; supersedes the standalone 0.3.5 line).
 

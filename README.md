@@ -10,7 +10,7 @@ byte-for-byte what installs.
 |--------|--------------|
 | autonomity | Per-session autonomous mode: blocks user-facing prompts, auto-approves plan/permission prompts, clean-git Stop gate (`/autonomity:on\|off\|status`) |
 | cautium | Always-on security conscience: a `SessionStart` hook injects a universal secure-engineering primer into every session; zero-config, no commands, no state |
-| expertum | `/expertum:review`, `/expertum:research`, `/expertum:interview`, `/expertum:conduct` — fan work out to 54 read-only expert analysts; reports land in `.expertum/` via a zero-dep MCP server |
+| expertum | `/expertum:review`, `/expertum:research`, `/expertum:interview`, `/expertum:conduct`, `/expertum:conduct-mvp` — fan work out to 54 read-only expert analysts; reports land in `.expertum/` via a zero-dep MCP server |
 | graphyne | TDD gate + bidirectional related-files graph (MCP) with adoption hooks, per git project (`/graphyne:setup`) |
 | memosyne | Session-independent task memory (MCP) + adoption hooks (`/memosyne:setup`) |
 | sessio | Always-on scratch-file router: a `SessionStart` hook keeps temporary/generated files in a per-task dated subdir of a scratch root (`CLAUDE_SESSIONS_DIR`); onboards you to set it when unset |

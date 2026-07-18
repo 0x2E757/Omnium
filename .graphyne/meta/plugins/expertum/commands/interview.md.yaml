@@ -1,4 +1,8 @@
 related:
+  - path: plugins/expertum/commands/conduct-mvp.md
+    tags:
+      - command
+      - sibling
   - path: plugins/expertum/commands/conduct.md
     tags:
       - command

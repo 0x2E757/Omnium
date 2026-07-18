@@ -1,8 +1,8 @@
 {
   "name": "expertum",
-  "version": "0.7.7",
+  "version": "0.8.0",
   "license": "MIT",
-  "description": "Four slash commands — /expertum:review, /expertum:research, /expertum:interview, and /expertum:conduct — that fan a task out to read-only expert sub-agents. Review and research collect findings; interview walks the user through adaptive questionnaires to turn a vague idea into a pinned brief; conduct adds an autonomous plan->implement->expert-review loop in which the main agent does the coding. Commands run inside the stock main agent (no default-agent override): with an argument they act on the given instructions, without one they act on the preceding conversation. Analysts write one Markdown report each into a per-run .expertum/<timestamp>--<name>/ folder via a bundled zero-dependency MCP server.",
+  "description": "Slash commands — /expertum:review, /expertum:research, /expertum:interview, /expertum:conduct, and /expertum:conduct-mvp — that fan a task out to read-only expert sub-agents. Review and research collect findings; interview walks the user through adaptive questionnaires to turn a vague idea into a pinned brief; conduct adds an autonomous plan->implement->expert-review loop in which the main agent does the coding; conduct-mvp runs the same loop scoped to the minimal implementation of the ask, deferring speculative hardening. Commands run inside the stock main agent (no default-agent override): with an argument they act on the given instructions, without one they act on the preceding conversation. Analysts write one Markdown report each into a per-run .expertum/<timestamp>--<name>/ folder via a bundled zero-dependency MCP server.",
   "author": {
     "name": "Eric Kevrel"
   }

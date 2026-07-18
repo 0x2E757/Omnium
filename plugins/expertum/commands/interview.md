@@ -9,8 +9,9 @@ that all technically satisfy it, while the user's real, unspoken requirements
 stay hidden. This command drags them into the open: experts surface the
 **unspecified decisions** in their lens, you **interrogate the user** through
 short adaptive questionnaires until the scope is pinned, then you write a
-**brief** the user (or `/expertum:conduct`) can build against. The analysts stay
-READ-ONLY and only write reports; the interrogation and the brief are yours.
+**brief** the user (or `/expertum:conduct` / `/expertum:conduct-mvp`) can build
+against. The analysts stay READ-ONLY and only write reports; the interrogation
+and the brief are yours.
 
 ## 1. Determine the subject
 
@@ -207,12 +208,15 @@ assumption to be confirmed>
 <deferred, non-blocking — safe to resolve later>
 
 ## Next step
-<recommend /expertum:conduct (or /expertum:research) with this brief>
+<recommend /expertum:conduct — or /expertum:conduct-mvp for a deliberately
+minimal build, or /expertum:research — with this brief>
 ```
 
 ## 8. Wrap up
 
 Tell the user where the brief lives, the headline decisions, and the assumptions
-they should sanity-check before building. Offer to run `/expertum:conduct` with
-the brief as its input. Keep the chat summary tight; the detail lives in
-`brief.md` and the per-lens `scope--<stem>.md` reports.
+they should sanity-check before building. Offer to run `/expertum:conduct`
+(or `/expertum:conduct-mvp` when the user wants the smallest implementation
+that satisfies the brief) with the brief as its input. Keep the chat summary
+tight; the detail lives in `brief.md` and the per-lens `scope--<stem>.md`
+reports.

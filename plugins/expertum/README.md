@@ -1,9 +1,10 @@
 # Expertum
 
-Four slash commands that fan a task out to read-only expert sub-agents. Two
-synthesize findings (`review`, `research`); one (`interview`) interrogates you to
-turn a vague idea into a pinned brief; the last (`conduct`) also drives the
-change to completion under expert supervision. The main agent stays a **stock
+Slash commands that fan a task out to read-only expert sub-agents. `review` and
+`research` synthesize findings; `interview` interrogates you to turn a vague
+idea into a pinned brief; `conduct` drives the change to completion under
+expert supervision, and `conduct-mvp` does the same for the smallest
+implementation that satisfies the ask. The main agent stays a **stock
 Claude Code agent** — this plugin installs no default-agent override and changes
 nothing about how the main agent normally behaves. The expert machinery only
 runs when you invoke a command.
@@ -22,8 +23,13 @@ runs when you invoke a command.
   the main agent reconciles it and implements, then experts review the diff in a
   loop (up to 5 rounds) until none demand changes. The main agent does all the
   coding; the analysts only plan and review.
+- **`/expertum:conduct-mvp [what to build]`** — like `conduct`, but under a
+  binding MVP contract: the experts plan the **minimal** implementation of the
+  ask, review rounds (up to 3) block only on bugs and one-way-door design
+  choices, and speculative security/performance hardening is deferred into a
+  `deferred.md` backlog (recorded, not built).
 
-All four follow the same rule for their argument:
+Every command follows the same rule for its argument:
 
 - **With an argument** → that text is the subject (scope to review / question to
   research).
@@ -61,8 +67,7 @@ into Expertum's analyst skeleton. Report files are `review--<slug>.md`,
 
 The commands pick only the analysts relevant to the subject (typically 3–6) and
 give each an ownership boundary so reports don't overlap; the exact per-analyst
-focus and report filenames live in `commands/review.md`, `commands/research.md`,
-and `commands/conduct.md`.
+focus and report filenames live in the command files under `commands/`.
 
 ## MCP server (`server.mjs`)
 
