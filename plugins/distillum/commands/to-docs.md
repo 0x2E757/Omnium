@@ -3,7 +3,7 @@ description: Distill what this session established — decisions, constraints, h
 argument-hint: [the knowledge to distill — omit to harvest the preceding session]
 ---
 
-You are running the **/distillum:docs** command from inside the normal main
+You are running the **/distillum:to-docs** command from inside the normal main
 agent. Sessions establish knowledge the codebase does not yet state — a
 decision and its rationale, a constraint discovered the hard way, how a
 subsystem *actually* behaves versus how everyone assumed it did. This command
@@ -12,7 +12,7 @@ session.
 
 Documentation carries **declarative** knowledge: *what is true and why*. If
 what the session produced is really a **repeatable procedure** — how to do
-something again — that belongs in a skill: recommend `/distillum:skill` to
+something again — that belongs in a skill: recommend `/distillum:to-skill` to
 the user instead.
 
 ## 1. Harvest
@@ -39,12 +39,12 @@ stop. Do not pad documentation.
 ## 2. Qualify
 
 Confirm the harvest is declarative. A procedure wearing prose ("to deploy,
-first…") is skill material — suggest `/distillum:skill` to the user, do not
+first…") is skill material — suggest `/distillum:to-skill` to the user, do not
 invoke it yourself, and stop.
 
 **Mixed harvest** (the session established facts *and* produced a repeatable
 procedure): document the declarative part here, and at the end recommend
-`/distillum:skill` to the user, once, for the procedure. Never abort a valid
+`/distillum:to-skill` to the user, once, for the procedure. Never abort a valid
 declarative harvest because out-of-lane material is also present.
 
 ## 3. Find the home

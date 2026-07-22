@@ -3,7 +3,7 @@ description: Distill a procedure this session figured out into a reusable skill,
 argument-hint: [the procedure to distill — omit to harvest the preceding session]
 ---
 
-You are running the **/distillum:skill** command from inside the normal main
+You are running the **/distillum:to-skill** command from inside the normal main
 agent. Sessions routinely figure out procedures the hard way — wrong turns,
 version quirks, the one flag that makes it work — and that knowledge evaporates
 when the session ends. This command distills it into a **skill** so the next
@@ -12,7 +12,7 @@ session starts where this one ended.
 A skill carries **procedural** knowledge: *how to do X again*. If what the
 session produced is **declarative** — how something works, why a decision was
 made, a constraint that holds — that belongs in documentation: recommend
-`/distillum:docs` to the user instead.
+`/distillum:to-docs` to the user instead.
 
 ## 1. Harvest
 
@@ -39,11 +39,11 @@ pure trigger-surface noise.
 ## 2. Qualify and dedup
 
 - Confirm the harvest is procedural. If it is really declarative knowledge
-  wearing a to-do list, suggest `/distillum:docs` to the user — do not invoke
+  wearing a to-do list, suggest `/distillum:to-docs` to the user — do not invoke
   it yourself — and stop.
 - **Mixed harvest** (the session produced both a procedure and declarative
   knowledge): distill the procedural part here, and at the end recommend
-  `/distillum:docs` to the user, once, for the remainder. Never abort a valid
+  `/distillum:to-docs` to the user, once, for the remainder. Never abort a valid
   procedural harvest because out-of-lane material is also present.
 - **Search for an existing skill covering this ground** — the user-level
   skills directory (`~/.claude/skills/`), the project's (`.claude/skills/`),
@@ -63,7 +63,7 @@ repository?*
   project-level: `.claude/skills/<name>/SKILL.md`, committed with the project.
 - **Both** (a general core with project-specific constants) → write the
   general procedure user-level here; for the project constants, recommend
-  `/distillum:docs` to the user — placing them is that command's discipline.
+  `/distillum:to-docs` to the user — placing them is that command's discipline.
   Do not fork the skill per project.
 
 If placement is genuinely ambiguous after the test, ask the user — this is the

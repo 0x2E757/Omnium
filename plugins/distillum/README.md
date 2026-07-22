@@ -15,7 +15,7 @@ nothing else.
 
 The split is by the kind of knowledge:
 
-- **`/distillum:skill`** — **procedural** knowledge (*how to do X again*): a
+- **`/distillum:to-skill`** — **procedural** knowledge (*how to do X again*): a
   procedure the session figured out the hard way becomes a reusable skill,
   user-level (`~/.claude/skills/`) or project-level (`.claude/skills/`). The
   command walks a quality checklist: an honesty gate (no skill unless the
@@ -25,7 +25,7 @@ The split is by the kind of knowledge:
   embedded as warnings at the step where they bite, and a replay test — would
   the skill have fired, and would it have prevented today's wrong turns?
 
-- **`/distillum:docs`** — **declarative** knowledge (*what is true and why*):
+- **`/distillum:to-docs`** — **declarative** knowledge (*what is true and why*):
   decisions with rationale, constraints discovered the hard way, behavior that
   contradicted assumptions. The command finds the right home among the
   project's existing documentation surfaces (decision record, `CLAUDE.md`,

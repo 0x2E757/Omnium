@@ -10,6 +10,16 @@ listed here — only features (MINOR) and notable fixes. Format follows
 ### 0.4.4 — 2026-07-06
 - Consolidated into the Omnium marketplace (baseline; supersedes the standalone 0.1.5 line).
 
+## distillum
+
+### 0.1.1 — 2026-07-22
+- **Command rename:** `/distillum:skill` → `/distillum:to-skill`,
+  `/distillum:docs` → `/distillum:to-docs`. The basename `skill.md` collides
+  with Claude Code's `SKILL.md` skill-bundle discovery on case-insensitive
+  filesystems: the whole `commands/` directory was claimed as a single skill
+  named "commands" and neither command surfaced. 0.1.0 (released the same
+  day) was effectively unusable; nothing else changed.
+
 ## expertum
 
 ### 0.8.0 — 2026-07-18

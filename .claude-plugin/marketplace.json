@@ -18,7 +18,7 @@
     {
       "name": "distillum",
       "source": "./plugins/distillum",
-      "description": "A session-knowledge distiller: /distillum:skill turns a procedure the session figured out into a reusable skill (user- or project-level, with dedup, placement, and replay-test quality gates); /distillum:docs folds declarative knowledge (decisions, constraints, how things actually work) into the project's existing documentation home, fixing drift when found. Fully standalone: two markdown commands; no hooks, no MCP server, no state."
+      "description": "A session-knowledge distiller: /distillum:to-skill turns a procedure the session figured out into a reusable skill (user- or project-level, with dedup, placement, and replay-test quality gates); /distillum:to-docs folds declarative knowledge (decisions, constraints, how things actually work) into the project's existing documentation home, fixing drift when found. Fully standalone: two markdown commands; no hooks, no MCP server, no state."
     },
     {
       "name": "expertum",

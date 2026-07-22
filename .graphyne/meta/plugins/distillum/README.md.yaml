@@ -1,7 +1,7 @@
 related:
-  - path: plugins/distillum/commands/docs.md
+  - path: plugins/distillum/commands/to-docs.md
     tags:
       - doc
-  - path: plugins/distillum/commands/skill.md
+  - path: plugins/distillum/commands/to-skill.md
     tags:
       - doc

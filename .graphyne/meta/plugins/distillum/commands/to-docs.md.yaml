@@ -1,5 +1,5 @@
 related:
-  - path: plugins/distillum/commands/docs.md
+  - path: plugins/distillum/commands/to-skill.md
     tags:
       - sibling
   - path: plugins/distillum/README.md

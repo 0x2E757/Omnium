@@ -32,6 +32,18 @@ pins `* text=auto eol=lf` — every text file checks out as LF on every platform
 The CRLF test vectors in `tests/parity/fixtures/` are JSON-escaped, not raw
 bytes, so no file is exempt; `tests/omnium/eol.test.mjs` guards both facts.
 
+## Naming plugin command files
+
+A slash-command file's basename becomes the command name (`commands/foo.md` →
+`/plugin:foo`) — and the basename `skill.md` is effectively **reserved**:
+Claude Code's skill discovery claims any directory containing a `SKILL.md` as
+a skill bundle named after the directory, and on case-insensitive filesystems
+(the Windows/macOS default) `commands/skill.md` matches it. The whole
+`commands/` directory is then swallowed as one skill named "commands" and
+every sibling command vanishes from the roster (observed live with distillum
+0.1.0; fixed by the `to-skill.md`/`to-docs.md` rename in 0.1.1). Never use
+`skill.md`, in any case variant, as a command basename.
+
 ## Vendoring contract (shared modules)
 
 Every `shared/*.mjs` file is canonical — the MCP core (`mcp-core.mjs`,
