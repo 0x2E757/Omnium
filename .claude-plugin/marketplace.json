@@ -16,6 +16,11 @@
       "description": "An always-on, zero-config security conscience: a single SessionStart hook injects a three-layer primer into every session — universal security duties (secrets, injection-safe input, least-privilege authN/Z, supply-chain and crypto hygiene), a universal 0-10 change-impact rubric, and an OS-dependent risk mapping keyed on process.platform. No commands, no state, cross-platform."
     },
     {
+      "name": "distillum",
+      "source": "./plugins/distillum",
+      "description": "A session-knowledge distiller: /distillum:skill turns a procedure the session figured out into a reusable skill (user- or project-level, with dedup, placement, and replay-test quality gates); /distillum:docs folds declarative knowledge (decisions, constraints, how things actually work) into the project's existing documentation home, fixing drift when found. Fully standalone: two markdown commands; no hooks, no MCP server, no state."
+    },
+    {
       "name": "expertum",
       "source": "./plugins/expertum",
       "description": "Provides /expertum:review, /expertum:research, /expertum:interview, /expertum:conduct, and /expertum:conduct-mvp. Review and research fan the task out to 54 read-only expert analysts that emit one Markdown report each into a per-run .expertum/<timestamp>--<name>/ folder via a bundled zero-dependency MCP server; interview walks the user through questionnaires to turn a vague idea into a pinned brief; conduct adds an autonomous plan->implement->expert-review loop; conduct-mvp is the same loop scoped to a minimal build."

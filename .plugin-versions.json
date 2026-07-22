@@ -7,6 +7,10 @@
     "version": "0.1.0",
     "hash": "6028a67f7e64ce2137670e76e7e39f963532c835975e2fce56c0b538878f250b"
   },
+  "distillum": {
+    "version": "0.1.0",
+    "hash": "76e40214de0717866fc16951d8273ebb5d3876ed0a53fab200281127f85a2928"
+  },
   "expertum": {
     "version": "0.8.0",
     "hash": "7df9a92fa4dc18a938da701372a434a7cf9d571239b60b795dbbe9d3bc1cf672"

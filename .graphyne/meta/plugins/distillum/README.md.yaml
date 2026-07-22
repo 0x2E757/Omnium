@@ -1,0 +1,7 @@
+related:
+  - path: plugins/distillum/commands/docs.md
+    tags:
+      - doc
+  - path: plugins/distillum/commands/skill.md
+    tags:
+      - doc

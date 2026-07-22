@@ -1,0 +1,9 @@
+{
+  "name": "distillum",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Session-knowledge distiller: /distillum:skill turns a procedure the session figured out into a reusable skill (user- or project-level), /distillum:docs folds declarative knowledge (decisions, constraints, how things actually work) into the project's documentation. Fully standalone: two markdown commands; no hooks, no MCP server, no state, no dependency on any other plugin.",
+  "author": {
+    "name": "Eric Kevrel"
+  }
+}
