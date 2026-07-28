@@ -31,6 +31,47 @@ test("model is found by deep lookup (nested display_name)", () => {
   assert.match(out, /:: Deep Model/);
 });
 
+test("line 1 appends the reasoning effort when the payload carries one", () => {
+  const out = strip(
+    renderStatusline({
+      data: { cwd: "/home/projects/Omnium", model: { display_name: "Claude Opus 5" }, effort: { level: "xhigh" } },
+      user: "eric@example.com",
+      now: NOW,
+    }),
+  );
+  assert.equal(out.split("\n")[0], "eric@example.com @ Omnium :: Claude Opus 5 (xhigh)");
+});
+
+test("effort is color-coded: red -> orange -> folder tone -> violet -> purple", () => {
+  const expected = {
+    low: ESC + "[0;31m",
+    medium: ESC + "[0;38;5;208m",
+    high: ESC + "[38;5;223m",
+    xhigh: ESC + "[38;5;183m",
+    max: ESC + "[38;5;135m",
+  };
+  for (const [level, code] of Object.entries(expected)) {
+    const line1 = renderStatusline({
+      data: { model: { display_name: "M" }, effort: { level } },
+      now: NOW,
+    }).split("\n")[0];
+    assert.ok(line1.includes(`${code}(${level})${ESC}[0m`), `${level} must be painted with ${JSON.stringify(code)}`);
+  }
+});
+
+test("an unknown effort level stays muted rather than mis-colored", () => {
+  const line1 = renderStatusline({
+    data: { model: { display_name: "M" }, effort: { level: "turbo" } },
+    now: NOW,
+  }).split("\n")[0];
+  assert.ok(line1.includes(`${ESC}[0;90m(turbo)${ESC}[0m`));
+});
+
+test("line 1 omits the effort when the payload has none (model without effort)", () => {
+  const out = strip(renderStatusline({ data: { model: { display_name: "Claude Haiku 4.5" } }, now: NOW }));
+  assert.equal(out.split("\n")[0], "? @ ? :: Claude Haiku 4.5");
+});
+
 test("context percentage and bar reflect used_percentage", () => {
   const out = strip(renderStatusline({ data: { used_percentage: 42 }, now: NOW }));
   assert.match(out, /Context:\s+42%/);

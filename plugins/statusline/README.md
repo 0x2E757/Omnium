@@ -47,7 +47,10 @@ this status line? Just disable the plugin.
 
 ## What it shows
 
-Four lines: `<account> @ <folder> :: <model>`; a **context** usage bar with
+Four lines: `<account> @ <folder> :: <model> (<effort>)` — the reasoning effort is
+shown only when the payload carries one (i.e. for models where it applies) and is
+color-coded up the ramp: `low` red, `medium` orange, `high` the folder tone,
+`xhigh` violet, `max` purple; a **context** usage bar with
 whole-session token totals (summed from the transcript); a **session** (5-hour
 window) usage bar with last-prompt cache figures; and a footer with the clock,
 the rate-limit reset time, API time and cost.

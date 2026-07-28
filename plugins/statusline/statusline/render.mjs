@@ -9,7 +9,7 @@
 // nothing and exits 0, so a bad payload never dumps a stack trace into the bar.
 //
 // Shape:
-//   <user> @ <folder> :: <model>
+//   <user> @ <folder> :: <model> (<effort>)
 //   Context: NN% [bar] | Tokens: ↑<in> / ↓<out> (total, whole session)
 //   Session: NN% [bar] | Cache: <read> (+<write>) (last prompt)
 //   Updated at <now> :: Reset at <reset> (TZ) :: API time <t> ($<cost>)
@@ -50,12 +50,20 @@ const USER = "\x1b[38;5;250m";
 const FOLDER = "\x1b[38;5;223m";
 const COST = "\x1b[38;5;38m";
 const IN = "\x1b[0;36m"; // ↑ input tokens
-const CACHEW = "\x1b[38;5;135m"; // cache write
+const VIOLET = "\x1b[38;5;183m";
+const PURPLE = "\x1b[38;5;135m";
+const CACHEW = PURPLE; // cache write
 // Percentage thresholds (also reused as plain colors below).
 const GREEN = "\x1b[0;32m",
   YELLOW = "\x1b[0;33m",
   ORANGE = "\x1b[0;38;5;208m",
   RED = "\x1b[0;31m";
+
+// Reasoning effort ramps the other way round from a usage percentage: more is
+// better, so low is the alarming end. Above high the ramp leaves the warm tones
+// for violet then purple; an unrecognized level falls back to MUTED, so a level
+// this map has never heard of is shown plainly rather than mis-colored.
+const EFFORT_COLORS = { low: RED, medium: ORANGE, high: FOLDER, xhigh: VIOLET, max: PURPLE };
 
 /** @param {string} code @param {string|number} s @returns {string} */
 const c = (code, s) => `${code}${s}${R}`;
@@ -106,6 +114,13 @@ export function renderStatusline({ data = {}, user = "?", now = new Date(0), tra
 
   // ----------------------------------------------------------- parse data ----
   const model = deepFind(d, "display_name") || "";
+
+  // Reasoning effort (low/medium/high/xhigh/max). Only present for models where
+  // it applies, so the annotation is dropped when it is missing. Tolerates both
+  // the documented `effort: { level }` and a bare string.
+  const effortRaw = deepFind(d, "effort");
+  const effortVal = effortRaw && typeof effortRaw === "object" ? effortRaw.level : effortRaw;
+  const effort = typeof effortVal === "string" ? effortVal.trim().slice(0, 12) : "";
 
   const dirPath = d.cwd || deepFind(d, "current_dir") || "";
   const folder = dirPath ? basename(String(dirPath)) : "?";
@@ -158,7 +173,9 @@ export function renderStatusline({ data = {}, user = "?", now = new Date(0), tra
   const clock = `${pad0(now.getHours())}:${pad0(now.getMinutes())}:${pad0(now.getSeconds())}`;
   const SEP = ` ${c(DIM, "::")} `;
 
-  const line1 = [c(USER, user), c(DIM, "@"), c(FOLDER, folder), c(DIM, "::"), c(BOLD, model)].join(" ");
+  const parts1 = [c(USER, user), c(DIM, "@"), c(FOLDER, folder), c(DIM, "::"), c(BOLD, model)];
+  if (effort) parts1.push(c(EFFORT_COLORS[effort.toLowerCase()] || MUTED, `(${effort})`));
+  const line1 = parts1.join(" ");
 
   const line2 = [
     c(DIM, "Context:"),
