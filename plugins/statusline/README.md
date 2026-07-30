@@ -1,7 +1,7 @@
 # Statusline
 
 A Claude Code plugin that ships a **custom status line** — the row at the bottom
-of the session showing the model, the working directory, and whatever else you
+of the session showing the model, the project directory, and whatever else you
 put there.
 
 Claude Code plugins **cannot declare a status line in their manifest**; the
@@ -47,7 +47,10 @@ this status line? Just disable the plugin.
 
 ## What it shows
 
-Four lines: `<account> @ <folder> :: <model> (<effort>)` — the reasoning effort is
+Four lines: `<account> @ <folder> :: <model> (<effort>)` — the folder is the
+session's **project directory** (`workspace.project_dir`, where Claude Code was
+started), so it stays put even when the agent walks into a subdirectory; the
+reasoning effort is
 shown only when the payload carries one (i.e. for models where it applies) and is
 color-coded up the ramp: `low` red, `medium` orange, `high` the folder tone,
 `xhigh` violet, `max` purple; a **context** usage bar with

@@ -122,7 +122,11 @@ export function renderStatusline({ data = {}, user = "?", now = new Date(0), tra
   const effortVal = effortRaw && typeof effortRaw === "object" ? effortRaw.level : effortRaw;
   const effort = typeof effortVal === "string" ? effortVal.trim().slice(0, 12) : "";
 
-  const dirPath = d.cwd || deepFind(d, "current_dir") || "";
+  // The folder is the session's PROJECT dir (where Claude Code was started), not
+  // the live working directory: `cwd`/`current_dir` follow the agent as it walks
+  // the tree, so the bar would flip from "Omnium" to "src" mid-session. Fall back
+  // to the working directory only when the payload carries no workspace.
+  const dirPath = deepFind(d, "project_dir") || d.cwd || deepFind(d, "current_dir") || "";
   const folder = dirPath ? basename(String(dirPath)) : "?";
 
   const costFmt = (Number(deepFind(d, "total_cost_usd")) || 0).toFixed(2);

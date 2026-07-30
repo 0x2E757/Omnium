@@ -26,6 +26,24 @@ test("line 1: <user> @ <folder> :: <model>", () => {
   assert.equal(out.split("\n")[0], "eric@example.com @ Omnium :: Claude Opus 4.8");
 });
 
+test("the folder is the session's project dir, not wherever the agent wandered off to", () => {
+  const out = strip(
+    renderStatusline({
+      data: {
+        cwd: "/home/projects/Omnium/plugins/statusline/src",
+        workspace: {
+          current_dir: "/home/projects/Omnium/plugins/statusline/src",
+          project_dir: "/home/projects/Omnium",
+        },
+        model: { display_name: "Claude Opus 5" },
+      },
+      user: "eric@example.com",
+      now: NOW,
+    }),
+  );
+  assert.equal(out.split("\n")[0], "eric@example.com @ Omnium :: Claude Opus 5");
+});
+
 test("model is found by deep lookup (nested display_name)", () => {
   const out = strip(renderStatusline({ data: { model: { display_name: "Deep Model" } }, now: NOW }));
   assert.match(out, /:: Deep Model/);
