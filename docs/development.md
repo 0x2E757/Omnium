@@ -26,6 +26,20 @@ One-time setup after clone: `npm install` and `git config core.hooksPath scripts
   Every task must end green here; no skipped or todo-marked tests.
 - `npm test` / `npm run typecheck` / `npm run lint` / `npm run stamp` / `npm run sync:shared` — the parts.
 
+## CI
+
+`.github/workflows/ci.yml` re-runs `npm run check` — the same one script, never a
+divergent list of steps — on every push and pull request, so each commit on
+GitHub carries a green check or a red cross. It runs on `ubuntu-latest` with
+Node 24 (the `engines` floor, so the declaration stays honest) and a read-only
+token.
+
+Linux only, on purpose: the shipped plugins are cross-platform, but several
+suites still assert POSIX paths and POSIX signal semantics and are red on
+Windows today (development happens on Windows, so both families do get
+exercised — just not both by CI). Make those suites platform-neutral and a
+`windows-latest` / `macos-latest` matrix becomes a two-line change.
+
 Line endings: version-guard hashes raw working-tree bytes, so `.gitattributes`
 pins `* text=auto eol=lf` — every text file checks out as LF on every platform
 (a Windows `core.autocrlf=true` checkout would otherwise skew every tree hash).

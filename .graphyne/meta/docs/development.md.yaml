@@ -1,4 +1,7 @@
 related:
+  - path: .github/workflows/ci.yml
+    tags:
+      - doc
   - path: CONTRIBUTING.md
     tags:
       - doc

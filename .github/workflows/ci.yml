@@ -1,0 +1,50 @@
+# Omnium CI — the repo-root harness gate, re-run on GitHub for every push.
+#
+# It runs exactly ONE command, `npm run check`, because that is the same gate
+# CONTRIBUTING.md demands locally: oxlint, the version-guard stamp check, the
+# node:test suite, and `tsc --noEmit`. Keeping CI to that single script is what
+# stops the green check here and a green terminal at home from ever drifting
+# apart — a new gate step is added to package.json, never to this file.
+#
+# Linux only, deliberately. The shipped plugins are cross-platform (DESIGN.md
+# directive 4) but several SUITES still assert POSIX paths and POSIX signal
+# semantics, so a windows-latest leg would be red for reasons that say nothing
+# about the plugins. The author develops on Windows, so between a local run and
+# this workflow both families are covered; add legs here once those suites are
+# platform-neutral.
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch: # re-run the gate by hand from the Actions tab
+
+# Least privilege: this workflow only reads the tree and runs tests. It never
+# pushes, comments, or publishes, so the token needs nothing beyond contents.
+permissions:
+  contents: read
+
+# Superseded runs on the same branch are cancelled, so the check mark on a
+# branch always reflects its tip rather than whichever run finished last.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: check (ubuntu, node 24)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          # 24 is the floor declared in package.json "engines" — testing the
+          # oldest supported runtime is what keeps that declaration honest.
+          node-version: 24.x
+          cache: npm
+      # `ci`, not `install`: the lockfile is the input, and a drifted
+      # package.json fails here instead of silently resolving something else.
+      - run: npm ci
+      - run: npm run check

@@ -1,5 +1,7 @@
 # Omnium
 
+[![CI](https://github.com/0x2E757/Omnium/actions/workflows/ci.yml/badge.svg)](https://github.com/0x2E757/Omnium/actions/workflows/ci.yml)
+
 One local Claude Code plugin marketplace housing its plugins as committed,
 zero-dependency, human-readable source. No build step: `plugins/<name>/` is
 byte-for-byte what installs.

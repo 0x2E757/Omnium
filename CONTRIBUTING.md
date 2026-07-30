@@ -62,7 +62,9 @@ changes). Commit a plugin's changes wholly — the guard hashes the working tree
 ## Before you open a PR
 
 - `npm run check` is green (oxlint + version-guard + `node --test` + `tsc --noEmit`), no
-  skipped or todo tests.
+  skipped or todo tests. GitHub Actions re-runs that exact script on Linux for
+  every push and PR (`.github/workflows/ci.yml`) — a red cross there is the same
+  gate failing, not a separate one.
 - Behavioral/ported change: the plugin's own suite + parity fixtures + repo
   guards green, plus one `--plugin-dir` smoke session. (DESIGN.md **D10**)
 - Update `CHANGELOG.md` only for a user-visible change or a MINOR — automatic
