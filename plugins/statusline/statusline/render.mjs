@@ -63,6 +63,7 @@ const GREEN = "\x1b[0;32m",
 // better, so low is the alarming end. Above high the ramp leaves the warm tones
 // for violet then purple; an unrecognized level falls back to MUTED, so a level
 // this map has never heard of is shown plainly rather than mis-colored.
+/** @type {Record<string, string>} */ // indexed by an arbitrary payload string, so it must stay open
 const EFFORT_COLORS = { low: RED, medium: ORANGE, high: FOLDER, xhigh: VIOLET, max: PURPLE };
 
 /** @param {string} code @param {string|number} s @returns {string} */
