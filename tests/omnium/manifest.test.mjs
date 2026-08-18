@@ -5,9 +5,8 @@
 // field, each shipped plugin.json version must be plain X.Y.Z sorting
 // strictly after its frozen floor from the old marketplaces, and
 // scripts/version-guard.mjs check mode must pass so no stale stamp can hide.
-// During the port window, marketplace entries legitimately precede their
-// directories, so the entry-to-directory direction is skipped until all
-// four plugin ports have landed.
+// The port window is closed (every migrated plugin has landed), so the
+// entry-to-directory direction is a hard assertion in both directions.
 //
 // It also pins the naming/identity convention: every plugin.json carries a
 // lowercase kebab-case name equal to its directory and NO displayName, so the
@@ -28,9 +27,11 @@ const MARKETPLACE_PATH = join(REPO_ROOT, '.claude-plugin', 'marketplace.json');
 const README_PATH = join(REPO_ROOT, 'README.md');
 
 // Frozen floors: the last versions ever shipped from the old single-plugin
-// marketplaces. Omnium versions must sort strictly after them (DESIGN.md D7).
+// marketplaces, for the plugins that were migrated from them (DESIGN.md D7).
+// Omnium versions must sort strictly after them. A retired plugin leaves this
+// map with its directory (autonomity, D19) — a floor with no tree to guard is
+// dead weight, and re-adding the name later would need a fresh decision anyway.
 const VERSION_FLOORS = new Map([
-  ['autonomity', '0.1.5'],
   ['expertum', '0.3.5'],
   ['graphyne', '0.1.28'],
   ['memosyne', '0.1.64'],
@@ -87,20 +88,15 @@ test('every marketplace entry source is a well-formed ./plugins/<name> path matc
   }
 });
 
-// Entry-to-directory tightens to a hard assertion once all four ports land;
-// until then entries whose directory does not exist yet are the CURRENT,
-// intended state of the port window, so the test is skipped with a message
-// rather than weakened into a silent pass.
-test(
-  'every marketplace entry has an existing plugins/<name> directory',
-  { skip: pluginDirNames.length < VERSION_FLOORS.size ? 'port window: entries may precede their directories until all four plugin ports land' : false },
-  () => {
-    const missing = entries
-      .map((entry) => entry.name)
-      .filter((name) => !existsSync(join(PLUGINS_DIR, name)));
-    assert.deepEqual(missing, [], `marketplace entries without a plugin directory: ${missing.join(', ')}`);
-  },
-);
+// The mirror of the first test, and the guard that catches a retirement done
+// by halves: deleting plugins/<name>/ while its marketplace entry survives
+// leaves an install target that no longer exists.
+test('every marketplace entry has an existing plugins/<name> directory', () => {
+  const missing = entries
+    .map((entry) => entry.name)
+    .filter((name) => !existsSync(join(PLUGINS_DIR, name)));
+  assert.deepEqual(missing, [], `marketplace entries without a plugin directory: ${missing.join(', ')}`);
+});
 
 test('marketplace entries carry no version field', () => {
   for (const entry of entries) {

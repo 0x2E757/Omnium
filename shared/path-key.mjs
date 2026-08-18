@@ -15,13 +15,11 @@
 //
 // `platform` is injectable ONLY so the win32/darwin branch is unit-testable from a
 // Linux CI (process.platform binds to the host); production callers omit it — the
-// same injectable-platform pattern as project.mjs normalizeRoot and autonomity
-// hook-lib isInside.
+// same injectable-platform pattern as project.mjs normalizeRoot.
 //
-// The CASE_INSENSITIVE_PLATFORMS set MUST stay in lockstep with autonomity
-// hooks/hook-lib.mjs: that plugin ships no MCP server and is deliberately excluded
-// from scripts/sync-shared.mjs (CONSUMER_DIRS is a literal three-plugin list), so
-// it keeps its own byte-copy of the same policy rather than vendoring this module.
+// CASE_INSENSITIVE_PLATFORMS is the single definition of that policy in the repo:
+// every consumer reaches it through a vendored copy of THIS module, so widening it
+// (a new case-insensitive platform) is one edit here plus scripts/sync-shared.mjs.
 
 import process from "node:process";
 

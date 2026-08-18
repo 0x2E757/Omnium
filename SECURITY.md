@@ -38,8 +38,6 @@ sandbox and grant nothing you could not already do. Be aware:
   memosyne search. **graphyne additionally runs the test command from a repo's
   own `.graphyne/config.json`**, at the same trust level as `npm test` — only enable
   graphyne in repositories you trust.
-- **autonomity** is opt-in and off by default; its guardrails are best-effort,
-  not a containment boundary.
 - **Supply-chain posture:** zero third-party runtime dependencies (`node:*`
   only), no build step, committed lockfile — a deliberately small attack surface.
 

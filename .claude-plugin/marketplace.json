@@ -6,11 +6,6 @@
   },
   "plugins": [
     {
-      "name": "autonomity",
-      "source": "./plugins/autonomity",
-      "description": "Hooks that enforce autonomous operation: no user-facing prompts, auto-approved plan/permission prompts, and a clean-git Stop gate. Per-session toggle via /autonomity:on|off|status; off by default."
-    },
-    {
       "name": "cautium",
       "source": "./plugins/cautium",
       "description": "An always-on, zero-config security conscience: a single SessionStart hook injects a three-layer primer into every session — universal security duties (secrets, injection-safe input, least-privilege authN/Z, supply-chain and crypto hygiene), a universal 0-10 change-impact rubric, and an OS-dependent risk mapping keyed on process.platform. No commands, no state, cross-platform."

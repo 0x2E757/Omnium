@@ -44,8 +44,9 @@ charter in [`docs/development.md`](docs/development.md).
 
 Canonical shared modules live in `shared/*.mjs` (mcp-core, mcp-schema, project,
 atomic-write, lock-core, path-key). Consumers (`expertum`, `graphyne`,
-`memosyne`) carry **byte-identical** copies in `common/`; autonomity has none —
-never give it one.
+`memosyne`) carry **byte-identical** copies in `common/`; the plugins with no
+MCP server (`cautium`, `distillum`, `sessio`, `statusline`) have none — never
+give them one.
 
 Edit only under `shared/`, then `npm run sync:shared`. Editing a `common/` copy
 in place is caught by `tests/omnium/vendoring.test.mjs`. See DESIGN.md **D13**

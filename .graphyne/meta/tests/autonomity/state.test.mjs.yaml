@@ -1,4 +1,0 @@
-related:
-  - path: plugins/autonomity/hooks/state.mjs
-    tags:
-      - test

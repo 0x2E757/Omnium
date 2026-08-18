@@ -1,7 +1,4 @@
 related:
-  - path: plugins/autonomity/hooks/hook.mjs
-    tags:
-      - spec
   - path: plugins/expertum/server.mjs
     tags:
       - spec

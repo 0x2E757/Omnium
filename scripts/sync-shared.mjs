@@ -7,11 +7,11 @@
 // tests/omnium/vendoring.test.mjs byte-compares every copy, so editing a copy
 // in place cannot survive the gate. Exposed as `npm run sync:shared`.
 //
-// Non-obvious decision: the consumer list is literal, not a scan — autonomity
-// ships no MCP server and must never grow a common/ folder by accident, and a
-// scan would silently start vendoring into any future directory. Consumers
-// whose directory does not exist yet (ports not landed) are skipped with a
-// note on stderr; this script creates no directories.
+// Non-obvious decision: the consumer list is literal, not a scan — the plugins
+// that ship no MCP server must never grow a common/ folder by accident, and a
+// scan would silently start vendoring into any future directory. A consumer
+// whose directory is missing is skipped with a note on stderr; this script
+// creates no directories.
 
 import { copyFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -22,7 +22,7 @@ const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SHARED_DIR = join(REPO_ROOT, 'shared');
 
 // Exactly the three MCP-server plugins consume the shared modules (DESIGN.md
-// D2/D13); autonomity is hooks-only and is deliberately absent.
+// D2/D13); the hooks-only and commands-only plugins are deliberately absent.
 const CONSUMER_DIRS = [
   'plugins/expertum/common',
   'plugins/graphyne/common',

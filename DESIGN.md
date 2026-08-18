@@ -2,22 +2,22 @@
 
 Omnium is the single local marketplace housing its plugins as committed,
 zero-dependency, human-readable source. This file is the binding decision record; the full
-expert reports it condenses live in `docs/design/`. The four migrated plugins
+expert reports it condenses live in `docs/design/`. The migrated plugins
 below carry a frozen-surface contract from their upstream releases; the
 repo-native plugins (`cautium` D15, `sessio` D16, `statusline`, `distillum`
 D18) have no such predecessor. The prime directives, in
 priority order:
 
-1. **No breaking changes.** Every user-visible surface of the currently
-   installed plugins (autonomity 0.1.5, expertum 0.3.5, graphyne 0.1.28,
-   memosyne 0.1.64) is frozen: tool names and input schemas, error-message
-   text, hook events/outputs, command names, on-disk store formats, env vars.
-   The exhaustive contract with per-surface verification is
-   `docs/design/design-ai-engineer.md` §(a). One sanctioned exception (D17,
-   this session): `memosyne_patch_task` — its name, input schema, and error
-   text — is retired and replaced by `memosyne_edit_task`, a deliberate
-   breaking bump to memosyne 0.4.0. It is the sole break of this freeze; every
-   other frozen surface stands.
+1. **No breaking changes.** Every user-visible surface of the migrated plugins
+   (expertum 0.3.5, graphyne 0.1.28, memosyne 0.1.64) is frozen: tool names and
+   input schemas, error-message text, hook events/outputs, command names,
+   on-disk store formats, env vars. The exhaustive contract with per-surface
+   verification is `docs/design/design-ai-engineer.md` §(a). Two sanctioned
+   exceptions, both by user directive: D17 retires `memosyne_patch_task` — its
+   name, input schema, and error text — for `memosyne_edit_task` (breaking bump
+   to memosyne 0.4.0); D19 retires the **whole** autonomity plugin (last shipped
+   0.4.5; its floor was 0.1.5), so its commands, hooks and state leave with it.
+   Those are the only breaks; every other frozen surface stands.
 2. **Zero runtime dependencies, no build.** `plugins/<name>/` is byte-for-byte
    what installs; an import that is not `node:*` or relative is a defect
    (guarded by tests).
@@ -52,6 +52,7 @@ priority order:
 | D16 | Sixth plugin `sessio`: an always-on, zero-config scratch-file router — a single `SessionStart` hook injects a primer that routes temporary/generated files into a per-task dated subdirectory (`<base>/YYYY-MM-DD--<desc>`) of a scratch root, with exceptions for explicit output paths and project files. The root is read from the **`CLAUDE_SESSIONS_DIR`** env var (a FROZEN surface per D1; user/OS-specific, never hardcoded); when unset the hook does NOT go quiet — it injects an ONBOARDING primer that has the agent ask the user for a base dir and persist the env (recommended: Claude Code settings `env` in `settings.json`, applied cross-platform to the session and its hooks). No MCP server, no commands, no state, no other events; dispatcher fails OPEN; no fs writes (the agent mkdirs on demand). Repo-native — outside D1's freeze except the new `CLAUDE_SESSIONS_DIR` knob; born at 0.1.0. Mirrors the cautium/autonomity zero-dep IO-shell/pure-lib split | user directive (this session) |
 | D17 | Retire `memosyne_patch_task` + its vendored fuzz-0 jsdiff@9.0.0 `applyPatch` port (`plugins/memosyne/common/unified-diff.mjs`) and the differential oracle; replace with a single LLM-native `memosyne_edit_task` — an exact `old_text`/`new_text` targeted editor (Claude Code `Edit` model: read-first, literal byte-match, unique-or-fail unless `replace_all`, empty `new_text` deletes), reusing the retired handler's lock / stale-Done guard / per-section validation. The uniqueness gate makes silent mis-apply impossible — no line numbers, no fuzz, no offset search to land on a coincidental duplicate. `memosyne_update_task` stays the full-section replace; `memosyne_edit_task` is the ONLY targeted editor. First sanctioned break of the D1 freeze (tool name + input schema + error text); breaking bump to memosyne 0.4.0. Supersedes D6 | user directive (this session) |
 | D18 | Eighth plugin `distillum`: a session-knowledge distiller — two markdown commands only, no hooks, no MCP server, no state, zero runtime code. `/distillum:to-skill` distills **procedural** knowledge (a procedure the session figured out) into a reusable skill, user-level or project-level, behind quality gates: an honesty gate (refuse an empty harvest), dedup against existing skills (update, never fork the trigger surface), a portability test for placement, trigger-phrase discipline for the frontmatter description, wrong turns embedded as warnings at the step where they bite, and a replay test against the session itself. `/distillum:to-docs` distills **declarative** knowledge (decisions + rationale, constraints, behavior that contradicted assumptions) into the project's existing documentation home — decision record / CLAUDE.md / docs / module headers — reconciling against what is written and fixing drift when the docs contradict the session; doc-sync obligations are honored via whatever tooling the session has active, phrased generically. When the harvest is the other kind (or mixed), each command distills its own kind and recommends the sibling to the user — it never invokes the sibling itself. **Standalone directive:** distillum must work as the ONLY installed Omnium plugin — its shipped surfaces (commands, README, plugin.json) name no sibling plugin and no sibling's tools, so it never sends a foreign agent hunting for tooling that isn't there; gate/sync integrations are written as generic capability descriptions that in-session tooling instructions (e.g. Graphyne's own hooks) bind to concrete tools. The boundary vs memosyne — memosyne remembers tasks (what we are doing), distillum extracts knowledge (what we learned) — is recorded here only, not in shipped files. Repo-native — outside D1's freeze; born at 0.1.0 | user directive (this session) |
+| D19 | **Retire the `autonomity` plugin outright** (last shipped 0.4.5): `plugins/autonomity/`, `tests/autonomity/`, its marketplace entry, its `.plugin-versions.json` stamp, both README rosters, the SECURITY note and the state-map/troubleshooting rows are deleted. Rationale: Claude Code drives itself autonomously now (ultra code + `/loop`), so a per-session "autonomous mode" is a workaround for a gap that closed — and its guards were the weakest part of the fleet by design (an `AskUserQuestion` deny plus a blanket `allow` that bypasses the permission system wholesale, on top of best-effort `git push`/cwd/`CronDelete` denials that never claimed to be a sandbox). Permission modes and the harness's own gates do that job better and with real enforcement; the clean-git Stop gate is the one idea worth missing, and it is a hook anyone can re-add per repo. **Second sanctioned break of directive 1** after D17 — the retirement of a whole plugin rather than of one surface inside it; consumers run `/plugin uninstall autonomity@omnium`, and the only state, `${os.tmpdir()}/claude-autonomity/`, is disposable. Nothing depended on it: it shipped no MCP server and was deliberately absent from `scripts/sync-shared.mjs` CONSUMER_DIRS (D2/D13), so the only couplings were prose — the `shared/path-key.mjs` "lockstep with autonomity hook-lib" note (now dropped; the fold policy has no second copy to track) and the graphyne/memosyne hook comments that cited its erase-the-prompt toggle pattern (re-anchored to the pattern itself). D7/D15/D16 keep their autonomity references as **historical record**, as do the frozen expert reports in `docs/design/` — this row is the single superseding statement | user directive (this session) |
 
 ## Verified mechanics the design rests on
 

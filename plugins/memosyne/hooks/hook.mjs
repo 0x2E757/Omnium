@@ -411,8 +411,7 @@ function sessionStart(input) {
 // The opt-in command. It is intercepted ahead of the activation gate below (it is
 // the very command that CREATES the .memosyne/ the gate checks for), bootstraps the
 // store at the project root, then erases the prompt with decision:"block" so it
-// never produces a model turn — mirroring how Autonomity's /autonomity:* toggles are
-// handled in its UserPromptSubmit hook.
+// never produces a model turn.
 const SETUP_RE = /^\/memosyne:setup\s*$/;
 
 /** True when `prompt` is exactly `/memosyne:setup` (strict — trailing args or
@@ -460,7 +459,7 @@ risks corrupting the on-disk schema.
 `;
 
 // UserPromptSubmit decision that erases the prompt: decision:"block" prevents a model
-// turn, and `reason`/`systemMessage` surface the outcome to the user (see Autonomity).
+// turn, and `reason`/`systemMessage` surface the outcome to the user.
 function emitDecision(reason) {
   process.stdout.write(JSON.stringify({ decision: "block", reason, systemMessage: reason }));
 }

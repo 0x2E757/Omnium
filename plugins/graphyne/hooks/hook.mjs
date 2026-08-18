@@ -287,8 +287,8 @@ function userPromptSubmit(root, input) {
 // `/graphyne:setup` is the adoption command: it CREATES the `.graphyne/` store so
 // the rest of Graphyne (opt-in until the store exists) wakes up. Because the store
 // is absent at adoption time, this is intercepted in main() BEFORE the opt-in gate.
-// Like Autonomity's hook-handled toggles, it performs the action and erases the
-// prompt (decision: "block") so it never produces a model turn. Strict on purpose:
+// Being hook-handled, it performs the action and erases the prompt
+// (decision: "block") so it never produces a model turn. Strict on purpose:
 // a trimmed full match only, so a message that merely mentions the command is never
 // swallowed.
 const SETUP_CMD_RE = /^\/graphyne:setup\s*$/;

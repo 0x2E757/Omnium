@@ -1,8 +1,4 @@
 {
-  "autonomity": {
-    "version": "0.4.5",
-    "hash": "16ea144531aac27d151c4f38350f72690325d1995fd2d6cf8c970611b0cb1de5"
-  },
   "cautium": {
     "version": "0.1.0",
     "hash": "6028a67f7e64ce2137670e76e7e39f963532c835975e2fce56c0b538878f250b"
@@ -12,16 +8,16 @@
     "hash": "c6eb8e4e1923f9dd981e2ad3d4fa826dc89a94bbd7e497cdc334d222d5509636"
   },
   "expertum": {
-    "version": "0.8.0",
-    "hash": "7df9a92fa4dc18a938da701372a434a7cf9d571239b60b795dbbe9d3bc1cf672"
+    "version": "0.8.1",
+    "hash": "abdd1639259b428459194e61a80ab82a9040d0062c2c3d6b7f111b513b5f7fd2"
   },
   "graphyne": {
-    "version": "0.8.0",
-    "hash": "884db9d10cccd1fabe7e20245ea7db07b034afa2f26cb077cd83c49c4e655ec1"
+    "version": "0.8.1",
+    "hash": "1de8cd4ed62483576ba036924f31bcd2bd098b9276ccc1605756cbcc57eb6b6f"
   },
   "memosyne": {
-    "version": "0.4.3",
-    "hash": "3fd6066280121719e1a65289046e456c36c97c72548a6197da2b9d4c3ddd6a84"
+    "version": "0.4.4",
+    "hash": "2eefc74b3bc8093d57f27dbd0c082914d23d618dc77c9e01e8047c400b7b6158"
   },
   "sessio": {
     "version": "0.1.1",

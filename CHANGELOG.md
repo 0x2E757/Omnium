@@ -7,6 +7,15 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ## autonomity
 
+### Removed — 2026-08-18
+- **The plugin is gone from Omnium** (DESIGN.md D19); 0.4.5 was its last
+  release. Claude Code drives itself well enough now (ultra code + `/loop`) that
+  autonomity had become a workaround rather than a capability. If you have it
+  installed, run `/plugin uninstall autonomity@omnium` — leaving it installed
+  keeps a marketplace entry that no longer exists. Nothing else depended on it,
+  and its only state (`${os.tmpdir()}/claude-autonomity/`) is disposable: delete
+  it to be tidy, or let a reboot clear it.
+
 ### 0.4.4 — 2026-07-06
 - Consolidated into the Omnium marketplace (baseline; supersedes the standalone 0.1.5 line).
 

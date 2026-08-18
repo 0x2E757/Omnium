@@ -10,7 +10,6 @@ byte-for-byte what installs.
      enforced by tests/omnium/manifest.test.mjs. Add a plugin = one row here. -->
 | Plugin | What it does |
 |--------|--------------|
-| autonomity | Per-session autonomous mode: blocks user-facing prompts, auto-approves plan/permission prompts, clean-git Stop gate (`/autonomity:on\|off\|status`) |
 | cautium | Always-on security conscience: a `SessionStart` hook injects a universal secure-engineering primer into every session; zero-config, no commands, no state |
 | distillum | `/distillum:to-skill`, `/distillum:to-docs` — distill what a session learned into a reusable skill (procedural) or into the project's docs (declarative, fixing drift); two markdown commands, no hooks, no state |
 | expertum | `/expertum:review`, `/expertum:research`, `/expertum:interview`, `/expertum:conduct`, `/expertum:conduct-mvp` — fan work out to 54 read-only expert analysts; reports land in `.expertum/` via a zero-dep MCP server |
@@ -33,7 +32,6 @@ with `/plugin`, or directly:
 <!-- Install roster: keep in sync with .claude-plugin/marketplace.json —
      enforced by tests/omnium/manifest.test.mjs. -->
 ```
-/plugin install autonomity@omnium
 /plugin install cautium@omnium
 /plugin install distillum@omnium
 /plugin install expertum@omnium

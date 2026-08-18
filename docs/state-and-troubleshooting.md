@@ -16,7 +16,6 @@ a git repo); one store is kept per repo regardless of subdirectory.
 | memosyne | Tasks (hand-off memory) | `<repoRoot>/.memosyne/<stem>.md` | Markdown | project | commit (intended) | no — it is the memory |
 | memosyne | Project config + guard notes | `<repoRoot>/.memosyne/{config.json,AGENTS.md,CLAUDE.md}` | JSON/text | project | commit | config regenerated |
 | memosyne | Nudge counters | `${CLAUDE_PLUGIN_DATA}/nudge-state/nudge-<session>-<repo>.json` | JSON | ephemeral | n/a | yes — cosmetic |
-| autonomity | On/off + stop markers | `${os.tmpdir()}/claude-autonomity/<session>.{state,stop-blocked}` | text | per session | n/a | yes — resets to "off" |
 | expertum | Analyst reports | `<projectDir>/.expertum/<run>/*.md` | Markdown | until deleted | gitignore recommended | yes |
 | graphyne, memosyne | Discovery registry | `<installRoot>/data/registry.json` | JSON | machine | gitignored | yes — rebuilt on next run |
 | all | Advisory locks | `*.lock` beside the file/registry | text | transient | n/a | yes if stale |
@@ -40,8 +39,8 @@ subdirectory share one store per repo. Locks are advisory exclusive-create
 `.lock` files; a crashed holder's lock is auto-reclaimed after
 `*_LOCK_STALE_MS` (default 5s), and acquisition waits up to `*_LOCK_WAIT_MS`
 (default 7s) before throwing. Hooks fail open: memosyne stays fully dormant
-until `.memosyne/` exists, and autonomity defaults to off and swallows write
-errors — so a broken store degrades to "no gate", never to a crash.
+until `.memosyne/` exists, and every hook swallows its own errors — so a broken
+store degrades to "no gate", never to a crash.
 
 ## Troubleshooting
 
@@ -63,9 +62,6 @@ errors — so a broken store degrades to "no gate", never to a crash.
    marketplace). It rebuilds automatically as the MCP runs — re-open each
    affected project once and it is re-added. To keep it across any reinstall,
    set a stable `GRAPHYNE_ROOT` / `MEMOSYNE_ROOT` before installing.
-6. **autonomity does nothing.** It is off by default every session and its state
-   in `os.tmpdir()` is wiped on reboot. Run `/autonomity:on` each session; there
-   is no persistent config to repair.
 
 ## Uninstall
 
@@ -78,5 +74,7 @@ errors — so a broken store degrades to "no gate", never to a crash.
    `.memosyne/*.md` are committed *content* — delete only to abandon the graph or
    the hand-off memory. `.graphyne/tasks/`, `.expertum/`, every `*.lock`, and the
    nudge counters are pure runtime and always safe to delete.
-5. **Ephemeral:** `${os.tmpdir()}/claude-autonomity/` clears itself on reboot;
-   delete it manually to be tidy.
+5. **Retired plugin residue (optional):** autonomity was removed in 2026-08
+   (CHANGELOG, DESIGN.md D19). If you ever ran it, `/plugin uninstall
+   autonomity@omnium` drops the install and `${os.tmpdir()}/claude-autonomity/`
+   clears itself on reboot — delete it manually to be tidy.

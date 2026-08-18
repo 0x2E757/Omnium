@@ -1,6 +1,6 @@
 {
   "name": "memosyne",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "license": "MIT",
   "description": "Session-independent task memory: an MCP server that persists tasks as markdown files per git project, plus adoption hooks that nudge the agent to record and hand off work.",
   "author": {
