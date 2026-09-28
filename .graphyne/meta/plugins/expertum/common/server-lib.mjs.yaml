@@ -1,4 +1,7 @@
 related:
+  - path: plugins/expertum/common/experts.mjs
+    tags:
+      - consumer
   - path: plugins/expertum/README.md
     tags:
       - doc

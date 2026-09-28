@@ -23,7 +23,7 @@
     {
       "name": "expertum",
       "source": "./plugins/expertum",
-      "description": "Provides /expertum:review, /expertum:research, /expertum:interview, /expertum:conduct, and /expertum:conduct-mvp. Review and research fan the task out to 54 read-only expert analysts that emit one Markdown report each into a per-run .expertum/<timestamp>--<name>/ folder via a bundled zero-dependency MCP server; interview walks the user through questionnaires to turn a vague idea into a pinned brief; conduct adds an autonomous plan->implement->expert-review loop; conduct-mvp is the same loop scoped to a minimal build."
+      "description": "Provides /expertum:review, /expertum:research, /expertum:interview, /expertum:conduct, and /expertum:conduct-mvp. Review and research fan the task out to read-only analysts — one expertum:analyst sub-agent taking on any of 54 expert lenses served as data (expertum_overview / expertum_expert), so the agent roster carries one line, not 54 — that emit one Markdown report each into a per-run .expertum/<timestamp>--<name>/ folder via a bundled zero-dependency MCP server; interview walks the user through questionnaires to turn a vague idea into a pinned brief; conduct adds an autonomous plan->implement->expert-review loop; conduct-mvp is the same loop scoped to a minimal build."
     },
     {
       "name": "graphyne",

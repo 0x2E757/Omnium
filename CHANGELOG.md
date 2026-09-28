@@ -31,6 +31,21 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ## expertum
 
+### 0.9.0 — 2026-09-28
+- **Breaking — the 54 per-expert sub-agents are gone** (DESIGN.md D21). Every
+  registered sub-agent costs a line in every session's agent roster whether or
+  not Expertum is used — about 5–7k tokens for the 54 analysts. The plugin now
+  registers a single `expertum:analyst`; the 54 expert lenses (role, Focus,
+  Method) are data under `experts/`, served by two new MCP tools:
+  `expertum_overview` (the roster the commands pick from, with the ownership
+  boundaries between lanes) and `expertum_expert` (one lens by name — the
+  analyst's first call). All five commands route through them; their inline
+  roster tables are gone.
+- **Migration:** anything that spawned an analyst directly as
+  `subagent_type: "expertum:<name>"` (e.g. `expertum:code--quality`) must
+  spawn `expertum:analyst` with `Expert: <name>` in its brief instead. Expert
+  names, report filenames, modes and report templates are unchanged.
+
 ### 0.8.0 — 2026-07-18
 - Added `/expertum:conduct-mvp`: a sibling of `/expertum:conduct` that plans and
   builds only the minimal implementation of the ask under a binding MVP

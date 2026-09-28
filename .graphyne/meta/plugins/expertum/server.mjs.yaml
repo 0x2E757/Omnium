@@ -2,6 +2,9 @@ related:
   - path: docs/design/design-ai-engineer.md
     tags:
       - spec
+  - path: plugins/expertum/common/experts.mjs
+    tags:
+      - consumer
   - path: plugins/expertum/common/mcp-core.mjs
     tags:
       - consumer

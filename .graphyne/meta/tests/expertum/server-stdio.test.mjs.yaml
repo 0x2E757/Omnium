@@ -1,4 +1,7 @@
 related:
+  - path: plugins/expertum/common/experts.mjs
+    tags:
+      - test
   - path: plugins/expertum/common/server-lib.mjs
     tags:
       - test

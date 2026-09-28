@@ -1,23 +1,23 @@
 related:
-  - path: plugins/expertum/agents/desktop--design.md
+  - path: plugins/expertum/agents/analyst.md
     tags:
       - test
-  - path: plugins/expertum/agents/desktop-ux--design.md
+  - path: plugins/expertum/commands/conduct-mvp.md
     tags:
       - test
-  - path: plugins/expertum/agents/gamedev--design.md
+  - path: plugins/expertum/commands/conduct.md
     tags:
       - test
-  - path: plugins/expertum/agents/linux--platform.md
+  - path: plugins/expertum/commands/interview.md
     tags:
       - test
-  - path: plugins/expertum/agents/macos--platform.md
+  - path: plugins/expertum/commands/research.md
     tags:
       - test
-  - path: plugins/expertum/agents/mobile-ux--design.md
+  - path: plugins/expertum/commands/review.md
     tags:
       - test
-  - path: plugins/expertum/agents/windows--platform.md
+  - path: plugins/expertum/common/experts.mjs
     tags:
       - test
   - path: plugins/expertum/common/server-lib.mjs

@@ -2,6 +2,9 @@ related:
   - path: .expertum/2026-07-03--14-05--cross-platform-audit/review-summary.md
     tags:
       - report
+  - path: plugins/expertum/common/experts.mjs
+    tags:
+      - spec
   - path: plugins/graphyne/common/globs.mjs
     tags:
       - spec

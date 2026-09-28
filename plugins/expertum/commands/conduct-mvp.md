@@ -113,6 +113,11 @@ on carries both artifacts verbatim.
 
 ## 5. Pick the relevant analysts
 
+Call the `expertum_overview` MCP tool for the roster — every expert's name and
+one-line domain, grouped, followed by the **ownership boundaries** between
+lanes. Give each analyst its lane and tell it what it does NOT own, so plans
+and reviews don't overlap.
+
 Select **2–4** analysts, never the whole roster. The floor: `code--quality`
 (always), plus the one design analyst of the primary domain — it owns the
 clean-seams clause. Add `testing--quality` when the repo has real test
@@ -134,104 +139,9 @@ prefer `testing--quality`, then the language analyst, then
 `debug--diagnostics` — unless the task is a bug fix, where
 `debug--diagnostics` outranks both.
 
-Map:
-
-**Design & architecture**
-
-| Analyst (`subagent_type`)         | Domain                                                   | Report stem              |
-|-----------------------------------|----------------------------------------------------------|--------------------------|
-| `expertum:backend--design`        | API design, service boundaries, data flows, resilience   | `backend--design`        |
-| `expertum:frontend--design`       | component architecture, state, rendering, accessibility  | `frontend--design`       |
-| `expertum:mobile--design`         | app architecture, navigation, battery, offline sync      | `mobile--design`         |
-| `expertum:ui-ux--design`          | interaction design, design tokens, usability, states     | `ui-ux--design`          |
-| `expertum:database--design`       | schema design, normalization, technology fit             | `database--design`       |
-| `expertum:event-sourcing--design` | events, CQRS, sagas, replay/projection safety            | `event-sourcing--design` |
-| `expertum:monorepo--design`       | workspace boundaries, build caching, dependency graph    | `monorepo--design`       |
-| `expertum:cloud--design`          | cloud infrastructure, IaC, cost, multi-region            | `cloud--design`          |
-| `expertum:kubernetes--design`     | K8s workloads, scaling, GitOps, resource governance      | `kubernetes--design`     |
-| `expertum:service-mesh--design`   | mesh configuration, mTLS, traffic policy                 | `service-mesh--design`   |
-| `expertum:graphql--design`        | schema design, resolver N+1, federation, cost limits     | `graphql--design`        |
-| `expertum:ai--design`             | LLM app architecture, RAG, agent orchestration, evals    | `ai--design`             |
-| `expertum:prompt--design`         | prompt structure, output contracts, injection robustness | `prompt--design`         |
-| `expertum:data--design`           | ETL/ELT, batch/streaming, warehouse modeling, quality    | `data--design`           |
-| `expertum:ml--design`             | training/inference pipeline, features, serving, eval     | `ml--design`             |
-| `expertum:vector-search--design`  | embeddings, ANN index, chunking, hybrid retrieval        | `vector-search--design`  |
-| `expertum:unity--design`          | Unity architecture, frame budget, asset pipeline         | `unity--design`          |
-| `expertum:legacy--design`         | strangler migration, compatibility, seams, sequencing    | `legacy--design`         |
-| `expertum:mobile-ux--design`      | touch/gesture UX, HIG/Material, navigation, states       | `mobile-ux--design`      |
-| `expertum:desktop-ux--design`     | UI density, windows/menus, shortcuts, multi-monitor      | `desktop-ux--design`     |
-| `expertum:desktop--design`        | desktop framework fit, IPC, auto-update, packaging       | `desktop--design`        |
-| `expertum:gamedev--design`        | game loop, ECS, determinism, netcode/tick-rate           | `gamedev--design`        |
-
-**Platform**
-
-| Analyst (`subagent_type`)         | Domain                                                   | Report stem              |
-|-----------------------------------|----------------------------------------------------------|--------------------------|
-| `expertum:windows--platform`      | Win32/WinRT, MSIX, registry, services, signing           | `windows--platform`      |
-| `expertum:linux--platform`        | POSIX, systemd, packaging, FHS, capabilities             | `linux--platform`        |
-| `expertum:macos--platform`        | Cocoa, sandbox, notarization, launchd, Keychain          | `macos--platform`        |
-
-**Security**
-
-| Analyst (`subagent_type`)         | Domain                                                | Report stem              |
-|-----------------------------------|-------------------------------------------------------|--------------------------|
-| `expertum:audit--security`        | threat model, OWASP, authn/z, secrets, compliance     | `audit--security`        |
-| `expertum:backend--security`      | injection, API security, SSRF, deserialization        | `backend--security`      |
-| `expertum:frontend--security`     | XSS, CSP, CORS, client-side data exposure             | `frontend--security`     |
-| `expertum:mobile--security`       | WebView, secure storage, pinning, deep links          | `mobile--security`       |
-| `expertum:threat-model--security` | trust boundaries, STRIDE, attack surface, abuse cases | `threat-model--security` |
-
-**Performance**
-
-| Analyst (`subagent_type`)        | Domain                                      | Report stem             |
-|----------------------------------|---------------------------------------------|-------------------------|
-| `expertum:app--performance`      | hot paths, complexity, allocations, caching | `app--performance`      |
-| `expertum:database--performance` | queries, indexes, N+1, migration safety     | `database--performance` |
-
-**Operations & infrastructure**
-
-| Analyst (`subagent_type`)            | Domain                                                  | Report stem                 |
-|--------------------------------------|---------------------------------------------------------|-----------------------------|
-| `expertum:database--operations`      | backup/DR, replication, HA, capacity, DB monitoring     | `database--operations`      |
-| `expertum:deployment--operations`    | CI/CD pipelines, containerization, progressive delivery | `deployment--operations`    |
-| `expertum:network--operations`       | routing, DNS, load balancing, TLS, firewalling          | `network--operations`       |
-| `expertum:terraform--operations`     | Terraform modules, state, provider pinning, drift       | `terraform--operations`     |
-| `expertum:observability--operations` | logging/metrics/tracing coverage, SLOs, alert quality   | `observability--operations` |
-| `expertum:incident--operations`      | detectability, blast radius, containment, recovery      | `incident--operations`      |
-| `expertum:ml--operations`            | tracking, registry, model CI/CD, drift monitoring       | `ml--operations`            |
-
-**Quality, testing & docs**
-
-| Analyst (`subagent_type`)         | Domain                                                   | Report stem              |
-|-----------------------------------|----------------------------------------------------------|--------------------------|
-| `expertum:code--quality`          | correctness, readability, error handling, production fit | `code--quality`          |
-| `expertum:architecture--quality`  | pattern consistency, SOLID, layering discipline          | `architecture--quality`  |
-| `expertum:testing--quality`       | pyramid coverage, edge cases, flakiness, CI health       | `testing--quality`       |
-| `expertum:docs--quality`          | doc structure, accuracy/sync, completeness, onboarding   | `docs--quality`          |
-| `expertum:api-docs--quality`      | OpenAPI accuracy, examples, error/versioning docs        | `api-docs--quality`      |
-| `expertum:accessibility--quality` | WCAG, semantics/ARIA, keyboard, assistive tech           | `accessibility--quality` |
-| `expertum:analytics--quality`     | analytical correctness, statistics, A/B design, metrics  | `analytics--quality`     |
-| `expertum:typescript--quality`    | type soundness, generics, strictness, runtime edges      | `typescript--quality`    |
-| `expertum:python--quality`        | Pythonic design, typing, async, perf, packaging          | `python--quality`        |
-| `expertum:golang--quality`        | idiomatic Go, goroutine safety, errors, allocation       | `golang--quality`        |
-| `expertum:rust--quality`          | ownership, unsafe soundness, errors, concurrency         | `rust--quality`          |
-| `expertum:sql--quality`           | set semantics, joins, indexing, transactions             | `sql--quality`           |
-
-**Diagnostics**
-
-| Analyst (`subagent_type`)          | Domain                                                    | Report stem               |
-|------------------------------------|-----------------------------------------------------------|---------------------------|
-| `expertum:debug--diagnostics`      | root-cause tracing when the task fixes a concrete failure | `debug--diagnostics`      |
-| `expertum:logs--diagnostics`       | log/error patterns, swallowed exceptions, correlation     | `logs--diagnostics`       |
-| `expertum:production--diagnostics` | prod failure modes, config drift, ops readiness           | `production--diagnostics` |
-
-**Ownership boundaries (avoid duplication):** the same lanes as `/expertum:review`
-apply — `audit--security` owns the threat model, the tier analysts own
-code-level practice in their tier; `app--performance` owns application hot
-paths, `database--performance` owns query/schema cost; `architecture--quality` owns
-pattern consistency, `backend--design` owns API/service design. Give each
-analyst its lane and tell it what it does NOT own, so plans and reviews don't
-overlap.
+Spawn every analyst, in every phase, as `subagent_type: "expertum:analyst"`,
+with **`Expert: <name>`** as the first line of its brief — the analyst loads
+that expert's lens itself.
 
 ## 6. Plan phase — spawn analysts in `plan` mode (Task tool, one message, parallel)
 
@@ -244,7 +154,7 @@ Give each analyst a precise brief containing:
 - The assembled context and the files in play.
 - Its ownership boundary (what it plans for and what it must NOT cover).
 - **Output contract:** call `expertum_write_report` with `directory: "<RUN_DIR>"`
-  and `filename: "plan--<stem>.md"` (the stem from the table). The report leads
+  and `filename: "plan--<stem>.md"` (`<stem>` = the expert's name). The report leads
   with the recommended **Approach**, then **Steps** (file-level, in apply order),
   **Risks** (with mitigations), **Validation** (how to prove it works, tests to
   add), and **Open questions**. No Verdict line. After Open questions, a

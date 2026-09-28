@@ -13,7 +13,7 @@ byte-for-byte what installs.
 | cautium | Always-on security conscience: a `SessionStart` hook injects a universal secure-engineering primer into every session; zero-config, no commands, no state |
 | contextum | `/contextum:prepare <topic>`, `/contextum:report [task]` — gather the context a coming task needs and brief you (read vs. inferred anchors, what was not examined) so a miss is visible before the task starts; audit the current context for dead weight (with its source) and weak spots resting on assumptions; two markdown commands, no hooks, no state |
 | distillum | `/distillum:to-skill`, `/distillum:to-docs` — distill what a session learned into a reusable skill (procedural) or into the project's docs (declarative, fixing drift); two markdown commands, no hooks, no state |
-| expertum | `/expertum:review`, `/expertum:research`, `/expertum:interview`, `/expertum:conduct`, `/expertum:conduct-mvp` — fan work out to 54 read-only expert analysts; reports land in `.expertum/` via a zero-dep MCP server |
+| expertum | `/expertum:review`, `/expertum:research`, `/expertum:interview`, `/expertum:conduct`, `/expertum:conduct-mvp` — fan work out to read-only analysts over 54 expert lenses (one registered sub-agent; lenses served by `expertum_overview`/`expertum_expert`); reports land in `.expertum/` via a zero-dep MCP server |
 | graphyne | TDD gate + bidirectional related-files graph (MCP) with adoption hooks, per git project (`/graphyne:setup`) |
 | memosyne | Session-independent task memory (MCP) + adoption hooks (`/memosyne:setup`) |
 | sessio | Always-on scratch-file router: a `SessionStart` hook keeps temporary/generated files in a per-task dated subdir of a scratch root (`CLAUDE_SESSIONS_DIR`); onboards you to set it when unset |

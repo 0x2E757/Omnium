@@ -15,3 +15,6 @@ related:
     tags:
       - command
       - sibling
+  - path: tests/expertum/agent-parity.test.mjs
+    tags:
+      - test

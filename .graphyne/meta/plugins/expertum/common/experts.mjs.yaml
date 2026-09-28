@@ -1,0 +1,28 @@
+related:
+  - path: DESIGN.md
+    tags:
+      - spec
+  - path: plugins/expertum/agents/analyst.md
+    tags:
+      - consumer
+  - path: plugins/expertum/common/server-lib.mjs
+    tags:
+      - consumer
+  - path: plugins/expertum/experts/_lanes.md
+    tags:
+      - data
+  - path: plugins/expertum/README.md
+    tags:
+      - doc
+  - path: plugins/expertum/server.mjs
+    tags:
+      - consumer
+  - path: tests/expertum/agent-parity.test.mjs
+    tags:
+      - test
+  - path: tests/expertum/experts.test.mjs
+    tags:
+      - test
+  - path: tests/expertum/server-stdio.test.mjs
+    tags:
+      - test

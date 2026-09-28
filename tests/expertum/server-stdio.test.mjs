@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { TOOL_NAME } from "../../plugins/expertum/common/server-lib.mjs";
+import { OVERVIEW_TOOL_NAME, EXPERT_TOOL_NAME } from "../../plugins/expertum/common/experts.mjs";
 
 const SERVER = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -81,4 +82,42 @@ test("end-to-end: initialize, tools/list, tools/call, and error codes", async (t
 
   assert.equal(byId.get(4).error.code, -32602); // unknown tool
   assert.equal(byId.get(5).error.code, -32601); // method not found
+});
+
+test("end-to-end: the expert catalog tools list and answer over stdio", async (t) => {
+  const proj = fs.mkdtempSync(path.join(os.tmpdir(), "expertum-stdio-"));
+  t.after(() => fs.rmSync(proj, { recursive: true, force: true }));
+
+  const frames = await runServer(
+    [
+      { jsonrpc: "2.0", id: 1, method: "initialize", params: {} },
+      { jsonrpc: "2.0", id: 2, method: "tools/list" },
+      { jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: OVERVIEW_TOOL_NAME, arguments: {} } },
+      {
+        jsonrpc: "2.0",
+        id: 4,
+        method: "tools/call",
+        params: { name: EXPERT_TOOL_NAME, arguments: { name: "code--quality" } },
+      },
+      { jsonrpc: "2.0", id: 5, method: "tools/call", params: { name: EXPERT_TOOL_NAME, arguments: { name: "nope" } } },
+      { jsonrpc: "2.0", id: 6, method: "tools/call", params: { name: EXPERT_TOOL_NAME, arguments: {} } },
+    ],
+    proj
+  );
+  const byId = new Map(frames.filter((f) => f.id !== undefined).map((f) => [f.id, f]));
+
+  // The frozen write-report tool keeps its first place; the catalog tools follow.
+  assert.deepEqual(
+    byId.get(2).result.tools.map((/** @type {{ name: string }} */ tool) => tool.name),
+    [TOOL_NAME, OVERVIEW_TOOL_NAME, EXPERT_TOOL_NAME]
+  );
+
+  assert.equal(byId.get(3).result.isError, undefined);
+  assert.match(byId.get(3).result.content[0].text, /`code--quality`/);
+
+  assert.equal(byId.get(4).result.isError, undefined);
+  assert.match(byId.get(4).result.content[0].text, /## Focus/);
+
+  assert.equal(byId.get(5).result.isError, true);
+  assert.equal(byId.get(6).result.isError, true); // missing name is gated in-band
 });

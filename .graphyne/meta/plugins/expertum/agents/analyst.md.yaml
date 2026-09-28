@@ -1,0 +1,7 @@
+related:
+  - path: plugins/expertum/common/experts.mjs
+    tags:
+      - consumer
+  - path: tests/expertum/agent-parity.test.mjs
+    tags:
+      - test

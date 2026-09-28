@@ -1,0 +1,7 @@
+related:
+  - path: plugins/expertum/common/experts.mjs
+    tags:
+      - data
+  - path: tests/expertum/experts.test.mjs
+    tags:
+      - test
