@@ -1,0 +1,9 @@
+{
+  "name": "contextum",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Context management around a task: /contextum:prepare <topic> gathers the code, tests, history, and recorded decisions a coming task will need into the conversation and reports a short, checkable briefing (read vs. inferred anchors, what was not examined); /contextum:report [task] audits the current context — dead weight with its source (environment / agent / user) and weak spots where the agent relies on assumptions rather than examined material. Fully standalone: two markdown commands; no hooks, no MCP server, no state.",
+  "author": {
+    "name": "Eric Kevrel"
+  }
+}

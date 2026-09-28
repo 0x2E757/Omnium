@@ -1,0 +1,7 @@
+related:
+  - path: plugins/contextum/commands/prepare.md
+    tags:
+      - doc
+  - path: plugins/contextum/commands/report.md
+    tags:
+      - doc

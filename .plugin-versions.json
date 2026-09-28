@@ -3,6 +3,10 @@
     "version": "0.1.0",
     "hash": "6028a67f7e64ce2137670e76e7e39f963532c835975e2fce56c0b538878f250b"
   },
+  "contextum": {
+    "version": "0.1.0",
+    "hash": "4fe6272fe0322a17fcb13ada29ce133846458d1182871d8e212af837c3f96568"
+  },
   "distillum": {
     "version": "0.1.1",
     "hash": "c6eb8e4e1923f9dd981e2ad3d4fa826dc89a94bbd7e497cdc334d222d5509636"

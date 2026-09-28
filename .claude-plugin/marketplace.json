@@ -11,6 +11,11 @@
       "description": "An always-on, zero-config security conscience: a single SessionStart hook injects a three-layer primer into every session — universal security duties (secrets, injection-safe input, least-privilege authN/Z, supply-chain and crypto hygiene), a universal 0-10 change-impact rubric, and an OS-dependent risk mapping keyed on process.platform. No commands, no state, cross-platform."
     },
     {
+      "name": "contextum",
+      "source": "./plugins/contextum",
+      "description": "Context management around a task: /contextum:prepare <topic> gathers the code, tests, history, and recorded decisions a coming task will need into the conversation (the main agent reads them itself), then reports a short, checkable briefing — the interpretation it chose, anchors marked read vs. inferred, and what it did not find or examine — so a miss is visible before the task starts; /contextum:report [task] audits the current context against that task or the whole session — dead weight with its source (environment injections, the agent's own loads, user attachments) and weak spots where the agent relies on assumptions rather than examined material, each with the step that would firm it up. Fully standalone: two markdown commands; no hooks, no MCP server, no state."
+    },
+    {
       "name": "distillum",
       "source": "./plugins/distillum",
       "description": "A session-knowledge distiller: /distillum:to-skill turns a procedure the session figured out into a reusable skill (user- or project-level, with dedup, placement, and replay-test quality gates); /distillum:to-docs folds declarative knowledge (decisions, constraints, how things actually work) into the project's existing documentation home, fixing drift when found. Fully standalone: two markdown commands; no hooks, no MCP server, no state."
