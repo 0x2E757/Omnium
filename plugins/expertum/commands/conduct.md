@@ -56,6 +56,11 @@ Spawn every analyst, in every phase, as `subagent_type: "expertum:analyst"`,
 with **`Expert: <name>`** as the first line of its brief — the analyst loads
 that expert's lens itself.
 
+**Missing report:** if an analyst returns without writing its report (its reply
+starts with `NO REPORT:`, or its file is absent from `<RUN_DIR>`), fix its brief
+and re-spawn it once; if it fails again, name the missing lens in your result —
+never drop it silently.
+
 ## 5. Plan phase — spawn analysts in `plan` mode (Task tool, one message, parallel)
 
 Give each analyst a precise brief containing:
@@ -106,8 +111,8 @@ Starting at round `N = 1`:
    `directory: "<RUN_DIR>"`, `filename: "review-r<N>--<stem>.md"`, a one-line
    **Verdict** (`approve` | `approve-with-nits` | `request-changes` | `block`),
    and findings tagged with severity and a `file:line`.
-3. Read the verdicts. **Satisfied** := no verdict is `request-changes` or
-   `block` (`approve-with-nits` is satisfied).
+3. Read the verdicts. **Satisfied** := every reviewer wrote its report and no
+   verdict is `request-changes` or `block` (`approve-with-nits` is satisfied).
    - **Satisfied** → leave the loop, go to phase 9.
    - **Not satisfied** → apply fixes for every `request-changes`/`block` finding,
      set `N = N + 1`, and repeat from step 1.

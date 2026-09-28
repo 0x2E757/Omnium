@@ -43,9 +43,11 @@ Every command follows the same rule for its argument:
    `.expertum/YYYY-MM-DD--HH-MM--<name>/` (`<name>` = kebab-case task slug, ≤30
    chars).
 3. It picks the relevant experts from the `expertum_overview` roster and spawns
-   one `expertum:analyst` per expert, in parallel (Task tool). Each is given
-   its expert's name, a mode, the subject, an ownership boundary (to avoid
-   overlap), and the exact output `directory` + `filename`.
+   one `expertum:analyst` per expert, in parallel (Agent tool). Each brief
+   starts with `Expert: <name>` and gives a mode, the subject, an ownership
+   boundary (to avoid overlap), and the exact output `directory` + `filename`.
+   An analyst that cannot load its expert writes no report and says so
+   (`NO REPORT: …`); the command re-spawns it once, then reports the gap.
 4. Each analyst first loads its expert's lens (`expertum_expert`), then works
    **read-only** (Read/Glob/Grep + WebSearch/WebFetch) and persists exactly one
    report via the bundled MCP server's `expertum_write_report` tool.

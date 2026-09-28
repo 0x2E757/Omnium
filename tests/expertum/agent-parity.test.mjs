@@ -5,7 +5,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { TOOL_NAME } from "../../plugins/expertum/common/server-lib.mjs";
-import { EXPERT_TOOL_NAME, OVERVIEW_TOOL_NAME } from "../../plugins/expertum/common/experts.mjs";
+import {
+  EXPERT_BRIEF_LINE,
+  EXPERT_TOOL_NAME,
+  OVERVIEW_TOOL_NAME,
+  loadCatalog,
+} from "../../plugins/expertum/common/experts.mjs";
 
 // Expertum registers exactly ONE sub-agent, `expertum:analyst`, and keeps its
 // expert lenses as data (plugins/expertum/experts/) served by the MCP server —
@@ -74,16 +79,59 @@ test("the analyst documents all four modes (brief bullet + output shape)", () =>
   assert.ok(text.includes("`" + EXPERT_TOOL_NAME + "`"), "analyst.md never tells it to load its lens");
 });
 
-test("every command spawns the analyst and routes via the overview, never a retired agent name", () => {
+test("the analyst registers as `analyst` and advertises the brief line it keys on", () => {
+  const text = fs.readFileSync(ANALYST, "utf8");
+  // `name:` — not the file name — is what makes the agent `expertum:analyst`.
+  assert.match(text, /^name: analyst$/m);
+  const description = text.split(/\r?\n/).find((l) => /^description:/.test(l)) ?? "";
+  assert.ok(description.includes(EXPERT_BRIEF_LINE), "the description must state the brief contract");
+  assert.ok(text.includes("`" + EXPERT_BRIEF_LINE + "`"), "the body must state the brief line");
+});
+
+test("every command spawns only the analyst, keyed by the brief line, and handles a missing report", () => {
   const files = fs.readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".md"));
   assert.ok(files.length >= 1, "expected at least one command");
   for (const f of files) {
     const text = fs.readFileSync(path.join(COMMANDS_DIR, f), "utf8");
-    assert.ok(text.includes('subagent_type: "expertum:analyst"'), `${f}: never spawns expertum:analyst`);
+    const spawns = text.match(/subagent_type[^\n]*/g) ?? [];
+    assert.ok(spawns.length >= 1, `${f}: never spawns an analyst`);
+    for (const spawn of spawns) {
+      assert.ok(spawn.includes('subagent_type: "expertum:analyst"'), `${f}: spawns something else: ${spawn}`);
+    }
     assert.ok(text.includes("`" + OVERVIEW_TOOL_NAME + "`"), `${f}: never calls the overview`);
+    assert.ok(text.includes("`" + EXPERT_BRIEF_LINE + "`"), `${f}: never states the brief line`);
+    assert.ok(
+      text.includes("returns without writing its report"),
+      `${f}: does not say what to do when an analyst writes no report`
+    );
+  }
+});
+
+// Every shipped Expertum text an agent or user reads — the commands, the
+// analyst, the lanes, the README.
+const PROSE = [
+  ...fs.readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".md")).map((f) => path.join(COMMANDS_DIR, f)),
+  ANALYST,
+  path.join(PLUGIN_DIR, "experts", "_lanes.md"),
+  path.join(PLUGIN_DIR, "README.md"),
+];
+
+test("no shipped text names a retired per-expert agent type", () => {
+  for (const file of PROSE) {
+    const text = fs.readFileSync(file, "utf8");
     assert.ok(
       !/expertum:[a-z0-9-]+--[a-z]+/.test(text),
-      `${f}: still names a retired per-expert agent type`
+      `${path.basename(file)}: still names a retired per-expert agent type`
     );
+  }
+});
+
+test("every expert named in shipped text exists in the catalog", () => {
+  const catalog = loadCatalog(path.join(PLUGIN_DIR, "experts"));
+  for (const file of PROSE) {
+    const text = fs.readFileSync(file, "utf8");
+    for (const [, name] of text.matchAll(/`([a-z0-9]+(?:-[a-z0-9]+)*--[a-z]+)`/g)) {
+      assert.ok(catalog.experts.has(name), `${path.basename(file)}: names unknown expert '${name}'`);
+    }
   }
 });

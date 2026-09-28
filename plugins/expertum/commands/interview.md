@@ -69,6 +69,11 @@ brief containing:
 - It must return to you only a short pointer (path + the top one or two
   questions), not the full report.
 
+**Missing report:** if an analyst returns without writing its report (its reply
+starts with `NO REPORT:`, or its file is absent from `<RUN_DIR>`), fix its brief
+and re-spawn it once; if it fails again, name the missing lens in your result —
+never drop it silently.
+
 ## 6. Interrogate the user — session loop (this is the heart of the command)
 
 Read every `scope--<stem>.md`. Pool all the Open decisions, **dedup** ones that

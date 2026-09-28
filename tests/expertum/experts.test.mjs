@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  EXPERT_BRIEF_LINE,
   GROUPS,
   loadCatalog,
   renderOverview,
@@ -86,7 +87,10 @@ test("handleExpert rejects unknown, path-like, and non-string names without touc
   for (const name of ["nope--design", "../agents/analyst", "_lanes", "", 42, undefined]) {
     const result = handleExpert({ name }, () => catalog);
     assert.equal(result.isError, true, `accepted ${String(name)}`);
-    assert.match(result.content[0].text, /expertum_overview/);
+    // The error reaches the analyst, which cannot call the overview: it must
+    // tell it to stop and hand the bad name back, not to go look elsewhere.
+    assert.match(result.content[0].text, /not in the Expertum catalog/);
+    assert.match(result.content[0].text, /stop and report/);
   }
 });
 
@@ -146,7 +150,16 @@ test("loadCatalog names the offending file and the specific defect", (t) => {
   }
 });
 
-test("loadCatalog refuses an empty catalog and a missing lanes file", (t) => {
+test("loadCatalog refuses an empty catalog and a missing or empty lanes file", (t) => {
   assert.throws(() => loadCatalog(tmpExperts(t, { "_lanes.md": "lanes\n" })), /no experts/);
   assert.throws(() => loadCatalog(tmpExperts(t, { "a--design.md": GOOD })), /_lanes\.md/);
+  assert.throws(
+    () => loadCatalog(tmpExperts(t, { "a--design.md": GOOD, "_lanes.md": " \n" })),
+    /_lanes\.md/
+  );
+});
+
+test("the overview states the brief line the analyst keys on", () => {
+  assert.equal(EXPERT_BRIEF_LINE, "Expert: <name>");
+  assert.ok(renderOverview(loadCatalog(EXPERTS_DIR)).includes("`" + EXPERT_BRIEF_LINE + "`"));
 });

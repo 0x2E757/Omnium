@@ -143,6 +143,11 @@ Spawn every analyst, in every phase, as `subagent_type: "expertum:analyst"`,
 with **`Expert: <name>`** as the first line of its brief — the analyst loads
 that expert's lens itself.
 
+**Missing report:** if an analyst returns without writing its report (its reply
+starts with `NO REPORT:`, or its file is absent from `<RUN_DIR>`), fix its brief
+and re-spawn it once; if it fails again, name the missing lens in your result —
+never drop it silently.
+
 ## 6. Plan phase — spawn analysts in `plan` mode (Task tool, one message, parallel)
 
 Give each analyst a precise brief containing:
@@ -264,8 +269,9 @@ contract itself is ambiguous. Starting at round `N = 1`:
    satisfaction test below. When adjudication moved anything to the DEFERRED
    list, re-write `plan--unified.md` via `expertum_write_report` so the next
    round's briefs carry the current list, not a stale one.
-4. **Satisfied** := after adjudication, no verdict remains at `request-changes`
-   or `block` (`approve-with-nits` is satisfied).
+4. **Satisfied** := every reviewer wrote its report and, after adjudication, no
+   verdict remains at `request-changes` or `block` (`approve-with-nits` is
+   satisfied).
    - **Satisfied** → leave the loop, go to phase 10.
    - **Not satisfied and `N < 3`** → apply fixes for every remaining **`bug`
      and `one-way-door`** finding — never for the deferred ones — set

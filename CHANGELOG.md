@@ -31,6 +31,16 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ## expertum
 
+### 0.9.1 — 2026-09-28
+- A lens can no longer drop out silently. An analyst whose expert name is
+  missing or unknown writes no report and replies `NO REPORT: …` (the unknown-
+  expert error now tells it exactly that, instead of pointing it at a tool it
+  does not have); every command re-spawns such an analyst once and otherwise
+  names the missing lens, and in the conduct loops a missing review no longer
+  counts as satisfied. The analyst's description now states its brief
+  contract (`Expert: <name>`), and an empty `experts/_lanes.md` is a catalog
+  defect.
+
 ### 0.9.0 — 2026-09-28
 - **Breaking — the 54 per-expert sub-agents are gone** (DESIGN.md D21). Every
   registered sub-agent costs a line in every session's agent roster whether or
@@ -41,10 +51,14 @@ listed here — only features (MINOR) and notable fixes. Format follows
   boundaries between lanes) and `expertum_expert` (one lens by name — the
   analyst's first call). All five commands route through them; their inline
   roster tables are gone.
-- **Migration:** anything that spawned an analyst directly as
-  `subagent_type: "expertum:<name>"` (e.g. `expertum:code--quality`) must
-  spawn `expertum:analyst` with `Expert: <name>` in its brief instead. Expert
-  names, report filenames, modes and report templates are unchanged.
+- **Migration:** after `/plugin marketplace update omnium`, run
+  `/reload-plugins` (or restart) so the roster drops the old agents. Anything
+  that spawned an analyst directly as `subagent_type: "expertum:<name>"` (e.g.
+  `expertum:code--quality`) must spawn `expertum:analyst` with
+  `Expert: <name>` as the first line of its brief instead, and permission rules
+  keyed on the old names (`Agent(expertum:code--quality)`) should move to
+  `Agent(expertum:analyst)`. Expert names, report filenames, modes and report
+  templates are unchanged.
 
 ### 0.8.0 — 2026-07-18
 - Added `/expertum:conduct-mvp`: a sibling of `/expertum:conduct` that plans and

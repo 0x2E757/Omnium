@@ -26,6 +26,13 @@ import { toolError } from "./server-lib.mjs";
 export const OVERVIEW_TOOL_NAME = "expertum_overview";
 export const EXPERT_TOOL_NAME = "expertum_expert";
 
+// The spawn protocol, owned here: every analyst runs as this sub-agent type,
+// and the first line of its brief names its expert. The overview states both;
+// agents/analyst.md and the five commands restate them, and
+// tests/expertum/agent-parity.test.mjs pins every restatement to these values.
+export const ANALYST_AGENT = "expertum:analyst";
+export const EXPERT_BRIEF_LINE = "Expert: <name>";
+
 /** Group headings, in the order the overview lists them. */
 export const GROUPS = [
   "Design & architecture",
@@ -46,7 +53,8 @@ export const OVERVIEW_TOOL_DEFINITION = {
   description:
     "List every Expertum expert lens — name and one-line domain, grouped — plus the " +
     "ownership boundaries between them. Call this to pick which experts to consult. " +
-    "Each expert runs as sub-agent type 'expertum:analyst' with the expert's name in its brief.",
+    "Each expert runs as sub-agent type '" + ANALYST_AGENT + "' whose brief starts with '" +
+    EXPERT_BRIEF_LINE + "'.",
   inputSchema: { type: "object", properties: {} },
 };
 
@@ -54,7 +62,7 @@ export const EXPERT_TOOL_DEFINITION = {
   name: EXPERT_TOOL_NAME,
   description:
     "Load one Expertum expert's lens — its role, Focus and Method — by name, as listed " +
-    "by expertum_overview. The expertum:analyst sub-agent calls this first, to become " +
+    "by expertum_overview. The " + ANALYST_AGENT + " sub-agent calls this first, to become " +
     "the expert its brief names.",
   inputSchema: {
     type: "object",
@@ -154,8 +162,8 @@ export function loadCatalog(dir) {
   if (experts.size === 0) {
     throw new Error("the experts directory holds no experts: " + dir);
   }
-  if (lanes === undefined) {
-    throw defect(LANES_FILE, "missing — the ownership boundaries are part of the catalog.");
+  if (!lanes) {
+    throw defect(LANES_FILE, "missing or empty — the ownership boundaries are part of the catalog.");
   }
   return { experts, lanes };
 }
@@ -168,8 +176,8 @@ export function renderOverview(catalog) {
   const lines = [
     "# Expertum experts (" + catalog.experts.size + ")",
     "",
-    "Spawn every analyst as sub-agent type `expertum:analyst` and name its expert in the",
-    "brief as `Expert: <name>`; the analyst loads that expert's lens itself. The report",
+    "Spawn every analyst as sub-agent type `" + ANALYST_AGENT + "` and start its brief with",
+    "`" + EXPERT_BRIEF_LINE + "`; the analyst loads that expert's lens itself. The report",
     "stem is the expert's name (e.g. `review--code--quality.md`).",
   ];
   for (const group of GROUPS) {
@@ -180,9 +188,7 @@ export function renderOverview(catalog) {
       lines.push("- `" + expert.name + "` — " + expert.domain);
     }
   }
-  if (catalog.lanes) {
-    lines.push("", "## Ownership boundaries", "", catalog.lanes);
-  }
+  lines.push("", "## Ownership boundaries", "", catalog.lanes);
   return lines.join("\n") + "\n";
 }
 
@@ -222,10 +228,13 @@ export function handleExpert(args, getCatalog) {
   return withCatalog(getCatalog, (catalog) => {
     const name = args && typeof args.name === "string" ? args.name : "";
     const expert = catalog.experts.get(name);
+    // The caller is the analyst, which cannot browse the roster: the error
+    // tells it to stop and hand the bad name back to whoever spawned it.
     if (!expert) {
       return toolError(
-        "Unknown expert " + JSON.stringify(args && args.name) +
-          ". Call expertum_overview for the list of expert names."
+        "Unknown expert " + JSON.stringify(args && args.name) + " — it is not in the Expertum " +
+          "catalog. Do not analyze without a lens: stop and report this name back to whoever " +
+          "spawned you (the orchestrator picks names from expertum_overview)."
       );
     }
     return {

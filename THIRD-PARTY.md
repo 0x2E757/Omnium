@@ -12,7 +12,8 @@ copy:
 
 ## wshobson/agents (MIT)
 
-Some of the expert analyst prompts under `plugins/expertum/agents/*.md` are
+Some of the expert lenses under `plugins/expertum/experts/*.md` and the shared
+analyst skeleton in `plugins/expertum/agents/analyst.md` are
 adapted from the wshobson/agents project (https://github.com/wshobson/agents). The full
 license text and copyright notice of that project follow.
 

@@ -24,10 +24,11 @@ import {
 
 const PLUGIN_ROOT = path.dirname(fileURLToPath(import.meta.url));
 
-// The expert catalog is read once, on first use, and kept: it ships with the
-// plugin and never changes under a running server. A load failure is not
-// cached as a crash — each catalog tool reports it as a tool error, and the
-// report-writing tool is unaffected.
+// The expert catalog is read once, on first successful use, and kept: it ships
+// with the plugin and never changes under a running server. A load failure is
+// NOT cached — the throw leaves `catalog` unset, so the next catalog call
+// retries the load; meanwhile each catalog tool reports the failure as a tool
+// error, and the report-writing tool is unaffected.
 /** @type {import("./common/experts.mjs").Catalog | undefined} */
 let catalog;
 function getCatalog() {

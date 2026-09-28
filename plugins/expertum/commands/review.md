@@ -57,6 +57,11 @@ brief containing:
   | `block`, then findings each tagged with severity and a `file:line` reference.
 - It must return to you only a short pointer (path + headline), not the full report.
 
+**Missing report:** if an analyst returns without writing its report (its reply
+starts with `NO REPORT:`, or its file is absent from `<RUN_DIR>`), fix its brief
+and re-spawn it once; if it fails again, name the missing lens in your result —
+never drop it silently.
+
 ## 6. Synthesize
 
 After all analysts finish, read their reports in `<RUN_DIR>` and produce an

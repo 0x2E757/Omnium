@@ -6,7 +6,8 @@ the plugin redistributes prompt material adapted from the named project.
 
 ## wshobson/agents (MIT)
 
-Some of the expert analyst prompts under `agents/*.md` are adapted from the
+Some of the expert lenses under `experts/*.md` (role, Focus, Method) and the
+shared analyst skeleton in `agents/analyst.md` are adapted from the
 wshobson/agents project (https://github.com/wshobson/agents). The full license
 text and copyright notice of that project follow.
 
