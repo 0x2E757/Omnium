@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   NAME,
+  REFRESH_INTERVAL_S,
   renderCommand,
   classifyStatusLine,
   statusLineNudge,
@@ -42,19 +43,36 @@ test("no statusLine configured -> install", () => {
   assert.equal(classifyStatusLine({ statusLine: { command: "   " } }, DESIRED), "install");
 });
 
-test("our exact command already present -> ok (stay quiet)", () => {
-  assert.equal(classifyStatusLine({ statusLine: { command: DESIRED } }, DESIRED), "ok");
+test("our exact command already present, on a refresh timer -> ok (stay quiet)", () => {
+  const settings = { statusLine: { command: DESIRED, refreshInterval: REFRESH_INTERVAL_S } };
+  assert.equal(classifyStatusLine(settings, DESIRED), "ok");
+});
+
+test("our command with a user-chosen refresh interval -> ok (their choice is kept)", () => {
+  assert.equal(classifyStatusLine({ statusLine: { command: DESIRED, refreshInterval: 1 } }, DESIRED), "ok");
+});
+
+// The footer clock only moves when the line re-renders; without a timer it
+// freezes between assistant messages, so an install without one is refreshed.
+test("our command without a usable refresh interval -> install (adds the timer, no need to ask)", () => {
+  assert.equal(classifyStatusLine({ statusLine: { command: DESIRED } }, DESIRED), "install");
+  assert.equal(classifyStatusLine({ statusLine: { command: DESIRED, refreshInterval: 0 } }, DESIRED), "install");
+  assert.equal(classifyStatusLine({ statusLine: { command: DESIRED, refreshInterval: "5" } }, DESIRED), "install");
+});
+
+test("REFRESH_INTERVAL_S is whole seconds, at least the documented minimum of 1", () => {
+  assert.ok(Number.isInteger(REFRESH_INTERVAL_S) && REFRESH_INTERVAL_S >= 1);
 });
 
 test("our command with trailing/leading whitespace -> ok (normalized, no re-nudge)", () => {
-  assert.equal(classifyStatusLine({ statusLine: { command: DESIRED + "\n" } }, DESIRED), "ok");
-  assert.equal(classifyStatusLine({ statusLine: { command: "  " + DESIRED + "  " } }, DESIRED), "ok");
+  assert.equal(classifyStatusLine({ statusLine: { command: DESIRED + "\n", refreshInterval: 5 } }, DESIRED), "ok");
+  assert.equal(classifyStatusLine({ statusLine: { command: "  " + DESIRED + "  ", refreshInterval: 5 } }, DESIRED), "ok");
 });
 
 test("our command with backslash path separators -> ok (normalized to forward slashes)", () => {
   const forward = renderCommand("C:/data/statusline-omnium/render.mjs");
   const backslashed = 'node "C:\\data\\statusline-omnium\\render.mjs"';
-  assert.equal(classifyStatusLine({ statusLine: { command: backslashed } }, forward), "ok");
+  assert.equal(classifyStatusLine({ statusLine: { command: backslashed, refreshInterval: 5 } }, forward), "ok");
 });
 
 test("our command but a stale (different) path -> install (refresh, no need to ask)", () => {
@@ -82,7 +100,7 @@ test("ok yields no nudge", () => {
 // *valid-JSON* value to paste — a raw (unescaped) snippet would be malformed
 // JSON and re-nudge every session. The paste value is JSON.stringify of the
 // statusLine object, correctly escaped by construction.
-const DESIRED_VALUE = JSON.stringify({ type: "command", command: DESIRED });
+const DESIRED_VALUE = JSON.stringify({ type: "command", command: DESIRED, refreshInterval: REFRESH_INTERVAL_S });
 
 test("install nudge names the plugin, settings.json, the statusLine key, and a valid-JSON value", () => {
   const c = statusLineNudge("install", DESIRED, undefined);
@@ -114,7 +132,7 @@ test("the value embedded IN the nudge parses back to the statusLine object (not 
   assert.ok(c);
   const m = c.match(/`(\{.*?\})`/);
   assert.ok(m, "nudge must contain a backtick-wrapped JSON object");
-  assert.deepEqual(JSON.parse(m[1]), { type: "command", command: DESIRED });
+  assert.deepEqual(JSON.parse(m[1]), { type: "command", command: DESIRED, refreshInterval: REFRESH_INTERVAL_S });
 });
 
 test("confirm nudge tells the agent to ASK and shows both commands", () => {

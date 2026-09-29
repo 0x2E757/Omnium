@@ -15,6 +15,15 @@
 export const NAME = "Statusline";
 
 /**
+ * Seconds between timer re-renders (`statusLine.refreshInterval`). Without a
+ * timer the line only re-renders on events such as a new assistant message, so
+ * the footer clock freezes while the agent works. Not 1: every render spawns
+ * node and re-reads the whole transcript for the token totals, and a clock that
+ * steps by 5 s is fine at a glance.
+ */
+export const REFRESH_INTERVAL_S = 5;
+
+/**
  * The exact `statusLine.command` string to install. Forward-slashes the path
  * (Git Bash on Windows silently fails on backslashes) and double-quotes it so a
  * path with spaces survives every shell (sh, PowerShell, cmd, Git Bash).
@@ -51,8 +60,11 @@ function normalizeCommand(command) {
 
 /**
  * Classify the current settings against the command we want installed:
- *   "ok"      — our command (up to cosmetic normalization) is already there; do nothing.
- *   "install" — nothing (or a stale copy of ours) is there; (re)install freely.
+ *   "ok"      — our command (up to cosmetic normalization) is already there on a
+ *               refresh timer; do nothing. Any positive interval counts, so a
+ *               user-tuned one is never overwritten.
+ *   "install" — nothing, a stale copy of ours, or ours without a timer is
+ *               there; (re)install freely.
  *   "confirm" — a foreign statusLine exists; ask the user before replacing it.
  * @param {any} settings the parsed user settings.json (or {})
  * @param {string} desiredCommand the command renderCommand() produced
@@ -61,7 +73,10 @@ function normalizeCommand(command) {
 export function classifyStatusLine(settings, desiredCommand) {
   const command = settings && settings.statusLine && settings.statusLine.command;
   if (typeof command !== "string" || command.trim() === "") return "install";
-  if (normalizeCommand(command) === normalizeCommand(desiredCommand)) return "ok";
+  if (normalizeCommand(command) === normalizeCommand(desiredCommand)) {
+    const interval = settings.statusLine.refreshInterval;
+    return typeof interval === "number" && interval >= 1 ? "ok" : "install";
+  }
   if (isOurs(command)) return "install";
   return "confirm";
 }
@@ -82,7 +97,7 @@ export function statusLineNudge(state, desiredCommand, existingCommand) {
   // written into settings.json. Build it with JSON.stringify so the escaping is
   // correct by construction — handing the agent a hand-concatenated snippet
   // produced invalid JSON, which silently re-nudged every session.
-  const value = JSON.stringify({ type: "command", command: desiredCommand });
+  const value = JSON.stringify({ type: "command", command: desiredCommand, refreshInterval: REFRESH_INTERVAL_S });
   const target =
     "in the user's Claude Code settings.json (`~/.claude/settings.json`), set the " +
     "top-level `statusLine` key to this exact JSON value (already valid — the inner " +

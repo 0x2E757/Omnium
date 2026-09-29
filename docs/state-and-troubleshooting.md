@@ -16,6 +16,7 @@ a git repo); one store is kept per repo regardless of subdirectory.
 | memosyne | Tasks (hand-off memory) | `<repoRoot>/.memosyne/<stem>.md` | Markdown | project | commit (intended) | no — it is the memory |
 | memosyne | Project config + guard notes | `<repoRoot>/.memosyne/{config.json,AGENTS.md,CLAUDE.md}` | JSON/text | project | commit | config regenerated |
 | memosyne | Nudge counters | `${CLAUDE_PLUGIN_DATA}/nudge-state/nudge-<session>-<repo>.json` | JSON | ephemeral | n/a | yes — cosmetic |
+| spatium | Turn clock + budget | `${CLAUDE_PLUGIN_DATA}/sessions/<session>.json` (`<os tmpdir>/claude-spatium/sessions/` under `--plugin-dir`) | JSON | per session, pruned after 7 days idle | n/a | yes — the current prompt loses its budget |
 | expertum | Analyst reports | `<projectDir>/.expertum/<run>/*.md` | Markdown | until deleted | gitignore recommended | yes |
 | graphyne, memosyne | Discovery registry | `<installRoot>/data/registry.json` | JSON | machine | gitignored | yes — rebuilt on next run |
 | all | Advisory locks | `*.lock` beside the file/registry | text | transient | n/a | yes if stale |

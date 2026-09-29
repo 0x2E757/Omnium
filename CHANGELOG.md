@@ -102,3 +102,13 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ### 0.3.11 — 2026-07-06
 - Consolidated into the Omnium marketplace (baseline; supersedes the standalone 0.1.64 line).
+
+## statusline
+
+### 0.2.0 — 2026-09-29
+- **The footer clock now keeps moving.** The recommended `statusLine` setting
+  carries `"refreshInterval": 5`, so the line re-renders every 5 seconds instead
+  of only on events such as a new assistant message. An existing install of
+  this status line without a refresh interval is nudged once to add it on the
+  next session start. An interval you set yourself (any number ≥ 1) is left
+  alone.

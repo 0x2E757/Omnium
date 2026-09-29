@@ -1,0 +1,16 @@
+related:
+  - path: DESIGN.md
+    tags:
+      - doc
+  - path: plugins/spatium/README.md
+    tags:
+      - doc
+  - path: tests/spatium/dispatch.test.mjs
+    tags:
+      - test
+  - path: tests/spatium/hooks-wiring.test.mjs
+    tags:
+      - test
+  - path: tests/spatium/logic.test.mjs
+    tags:
+      - test

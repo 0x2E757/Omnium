@@ -37,13 +37,20 @@ On first run the agent is nudged to set, in your `~/.claude/settings.json`:
 
 ```json
 {
-  "statusLine": { "type": "command", "command": "node \"<data-dir>/render.mjs\"" }
+  "statusLine": { "type": "command", "command": "node \"<data-dir>/render.mjs\"", "refreshInterval": 5 }
 }
 ```
 
 The agent does this **with you** (it never edits `settings.json` silently), and
 if you already have a status line it will **ask before replacing it**. Don't want
 this status line? Just disable the plugin.
+
+`refreshInterval` re-renders the line every 5 seconds, so the footer clock keeps
+moving while the agent works. Without it the line only re-renders on events such
+as a new assistant message. An install of this status line that lacks a
+refresh interval gets the timer added on the next session start. An interval you
+set yourself (any number ≥ 1) is kept. Every render spawns node and re-reads the
+transcript, which is why the default is not 1.
 
 ## What it shows
 

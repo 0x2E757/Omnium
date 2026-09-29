@@ -27,8 +27,12 @@
     "version": "0.1.1",
     "hash": "725d2952582da7a561e3f33e03ae06b865d51431d17bb76f2e348b38f80352fa"
   },
+  "spatium": {
+    "version": "0.1.2",
+    "hash": "4069a626d92803c760b971a8c5a9d1bec0d6b85de955dae0890e87a5f3a985e3"
+  },
   "statusline": {
-    "version": "0.1.5",
-    "hash": "07c24a4d66b8516b7b4625470955b45efec89ffb7118c00667bbd6535b84a09f"
+    "version": "0.2.0",
+    "hash": "5a8f9cefa0046134c00bd74d85e0db500b12e5d2a20805ef8b65a10e010ebfeb"
   }
 }

@@ -17,6 +17,7 @@ byte-for-byte what installs.
 | graphyne | TDD gate + bidirectional related-files graph (MCP) with adoption hooks, per git project (`/graphyne:setup`) |
 | memosyne | Session-independent task memory (MCP) + adoption hooks (`/memosyne:setup`) |
 | sessio | Always-on scratch-file router: a `SessionStart` hook keeps temporary/generated files in a per-task dated subdir of a scratch root (`CLAUDE_SESSIONS_DIR`); onboards you to set it when unset |
+| spatium | `/spatium:budget`, `/spatium:limit`, `/spatium:continue` — hooks tell the agent the real time on every prompt and tool call and, under a budget, the share used (it may pass 100%), with guidance at 50/80/100%; a guide or a self-enforced hard limit, never a cut-off |
 | statusline | Custom Claude Code status line: a `SessionStart` hook copies a self-contained renderer into the persistent data dir and nudges the agent to install a one-line `statusLine` command pointing at it (asks first if a foreign one exists); pure Node, fails open |
 
 ## Install
@@ -40,6 +41,7 @@ with `/plugin`, or directly:
 /plugin install graphyne@omnium
 /plugin install memosyne@omnium
 /plugin install sessio@omnium
+/plugin install spatium@omnium
 /plugin install statusline@omnium
 ```
 

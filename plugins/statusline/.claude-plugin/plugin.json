@@ -1,6 +1,6 @@
 {
   "name": "statusline",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "license": "MIT",
   "description": "Ships a custom Claude Code status line. Because a plugin cannot declare a statusLine itself, a single SessionStart hook copies the renderer into the persistent per-plugin data dir (stable across version bumps) and nudges the agent to install a one-line statusLine command pointing at it — asking first if a foreign statusLine is already configured. The renderer is self-contained, pure Node built-ins, renders from the status payload on stdin, and fails open. Cross-platform, no commands, no state beyond the synced renderer.",
   "author": {

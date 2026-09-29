@@ -11,6 +11,9 @@ related:
   - path: plugins/graphyne/common/yaml-lite.mjs
     tags:
       - spec
+  - path: plugins/spatium/hooks/spatium.mjs
+    tags:
+      - doc
   - path: README.md
     tags:
       - doc

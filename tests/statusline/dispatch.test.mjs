@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { renderCommand } from "../../plugins/statusline/hooks/hook-lib.mjs";
+import { REFRESH_INTERVAL_S, renderCommand } from "../../plugins/statusline/hooks/hook-lib.mjs";
 
 // End-to-end checks of the IO shell: on SessionStart it syncs the renderer into
 // the persistent data dir (argv[3] = ${CLAUDE_PLUGIN_DATA}), then nudges the
@@ -58,7 +58,9 @@ test("no settings.json: nudges to install and syncs the renderer into the data d
   // ...and the nudge carries a valid-JSON statusLine value pointing at that copy
   // (the inner quotes escaped, so pasting it produces parseable settings.json).
   assert.ok(
-    c.includes(JSON.stringify({ type: "command", command: renderCommand(box.dataRender) })),
+    c.includes(
+      JSON.stringify({ type: "command", command: renderCommand(box.dataRender), refreshInterval: REFRESH_INTERVAL_S }),
+    ),
     "the nudge must carry the correctly-escaped JSON value to paste",
   );
 });
@@ -66,7 +68,7 @@ test("no settings.json: nudges to install and syncs the renderer into the data d
 test("our command already installed at the data path: stays quiet", () => {
   const box = sandbox();
   writeSettings(box.configDir, {
-    statusLine: { type: "command", command: renderCommand(box.dataRender) },
+    statusLine: { type: "command", command: renderCommand(box.dataRender), refreshInterval: REFRESH_INTERVAL_S },
   });
   assert.deepEqual(run("SessionStart", box), {});
 });
@@ -120,5 +122,6 @@ test("no data dir (dev/--plugin-dir fallback): still nudges, pointing at the shi
   });
   assert.equal(r.status, 0, r.stderr);
   const c = JSON.parse(r.stdout).hookSpecificOutput.additionalContext;
-  assert.ok(c.includes(JSON.stringify({ type: "command", command: renderCommand(SHIPPED_RENDER) })));
+  const value = { type: "command", command: renderCommand(SHIPPED_RENDER), refreshInterval: REFRESH_INTERVAL_S };
+  assert.ok(c.includes(JSON.stringify(value)));
 });
