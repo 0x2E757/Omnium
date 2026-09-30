@@ -43,7 +43,7 @@
     {
       "name": "spatium",
       "source": "./plugins/spatium",
-      "description": "Time awareness for the agent: hooks inject the real time at the start of every prompt and after every tool call, with how long the current prompt has run (waits on the user excluded). /spatium:budget <duration> <task> sets a guide budget and /spatium:limit <duration> <task> a hard limit the agent enforces on itself; the lines then show the share used (it may pass 100%) with guidance at 50/80/100%; /spatium:continue carries a budget into a follow-up prompt. One zero-dependency Node hook file, per-session state, fails open."
+      "description": "Time awareness for the agent: hooks inject the real time at the start of every prompt and after every tool call, with how long the current prompt has run (waits on the user excluded). /spatium:budget <duration> <task> sets a guide budget and /spatium:limit <duration> <task> a hard limit the agent enforces on itself; the lines then show the share used (it may pass 100%) with guidance at 50/80/100%; /spatium:continue carries a budget into a follow-up prompt. Subagents get their own clock and can be given their own budget by the orchestrator. One zero-dependency Node hook file, per-session state, fails open."
     },
     {
       "name": "statusline",

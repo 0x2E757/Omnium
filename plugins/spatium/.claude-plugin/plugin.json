@@ -1,8 +1,8 @@
 {
   "name": "spatium",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "license": "MIT",
-  "description": "Time awareness for the agent: hooks tell it the real time at the start of every prompt and after every tool call, with how long the current prompt has run (excluding waits on the user). /spatium:budget <duration> <task> adds a guide budget and /spatium:limit <duration> <task> a hard limit the agent enforces on itself; the lines then show the share used, which may pass 100%, with guidance at 50/80/100%. /spatium:continue carries a budget into a follow-up prompt. One zero-dependency Node file, fails open, cross-platform.",
+  "description": "Time awareness for the agent: hooks tell it the real time at the start of every prompt and after every tool call, with how long the current prompt has run (excluding waits on the user). /spatium:budget <duration> <task> adds a guide budget and /spatium:limit <duration> <task> a hard limit the agent enforces on itself; the lines then show the share used, which may pass 100%, with guidance at 50/80/100%. /spatium:continue carries a budget into a follow-up prompt. Subagents get their own clock, and an orchestrator can give one its own budget by starting the Agent prompt with the same marker. One zero-dependency Node file, fails open, cross-platform.",
   "author": {
     "name": "Eric Kevrel"
   }

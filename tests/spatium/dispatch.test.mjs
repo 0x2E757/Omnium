@@ -134,6 +134,64 @@ test("a corrupt state file is treated as empty, not as an error", () => {
   assert.match(contextOf(out), /30m/);
 });
 
+test("an Agent prompt's budget marker reaches the subagent it starts, which then ticks on its own clock", () => {
+  const dir = dataDir();
+  run("UserPromptSubmit", { session_id: "s1", prompt: "hello" }, dir);
+  const agentCall = { session_id: "s1", tool_name: "Agent", tool_use_id: "tu1", tool_input: { prompt: "/spatium:limit 10m review" } };
+  assert.deepEqual(run("PreToolUse", agentCall, dir), {});
+  assert.ok(existsSync(join(dir, "sessions", "s1.spawn.json")));
+  const start = run("SubagentStart", { session_id: "s1", agent_id: "a1", agent_type: "general-purpose" }, dir);
+  assert.equal(start.hookSpecificOutput.hookEventName, "SubagentStart");
+  assert.match(contextOf(start), /Hard time limit for your task: 10m/);
+  assert.equal(existsSync(join(dir, "sessions", "s1.spawn.json")), false);
+  assert.ok(existsSync(join(dir, "sessions", "s1.agent-a1.json")));
+  const tick = run("PostToolUse", { session_id: "s1", agent_id: "a1", agent_type: "general-purpose", tool_name: "Bash" }, dir);
+  assert.match(contextOf(tick), /^Spatium: \d\d:\d\d:\d\d, \d+s of 10m hard limit \(\d+%\)\.$/);
+  const main = run("PostToolUse", { session_id: "s1", tool_name: "Agent" }, dir);
+  assert.match(contextOf(main), /turn time/);
+});
+
+test("a subagent started without a marker gets the primer and ticks its own run time", () => {
+  const dir = dataDir();
+  run("PreToolUse", { session_id: "s1", tool_name: "Agent", tool_use_id: "tu1", tool_input: { prompt: "look" } }, dir);
+  assert.match(contextOf(run("SubagentStart", { session_id: "s1", agent_id: "a1" }, dir)), /Spatium is active/);
+  const tick = run("PostToolUseFailure", { session_id: "s1", agent_id: "a1", tool_name: "Bash" }, dir);
+  assert.match(contextOf(tick), /your run time 0s\./);
+});
+
+test("a subagent with no clock of its own ticks the labeled top-level prompt time", () => {
+  const dir = dataDir();
+  run("UserPromptSubmit", { session_id: "s1", prompt: "hello" }, dir);
+  const tick = run("PostToolUse", { session_id: "s1", agent_id: "ghost", tool_name: "Read" }, dir);
+  assert.match(contextOf(tick), /top-level prompt time/);
+});
+
+test("a failed Agent call drops its budget, so the next subagent does not inherit it", () => {
+  const dir = dataDir();
+  const agentCall = { session_id: "s1", tool_name: "Agent", tool_use_id: "tu1", tool_input: { prompt: "/spatium:limit 10m x" } };
+  run("PreToolUse", agentCall, dir);
+  run("PostToolUseFailure", { ...agentCall, error: "Agent type 'fork' not found." }, dir);
+  assert.equal(existsSync(join(dir, "sessions", "s1.spawn.json")), false);
+  assert.doesNotMatch(contextOf(run("SubagentStart", { session_id: "s1", agent_id: "a1" }, dir)), /time limit/);
+});
+
+test("an unsafe agent id never becomes a path", () => {
+  const dir = dataDir();
+  run("PreToolUse", { session_id: "s1", tool_name: "Agent", tool_use_id: "tu1", tool_input: { prompt: "/spatium:limit 10m x" } }, dir);
+  const start = run("SubagentStart", { session_id: "s1", agent_id: "../escape" }, dir);
+  assert.match(contextOf(start), /Spatium is active/);
+  assert.deepEqual(readdirSync(join(dir, "sessions")), ["s1.spawn.json"]);
+});
+
+// A refused or failed API call ends the turn with StopFailure instead of Stop
+// (observed live); without it the turn stayed open and the next header lied.
+test("StopFailure closes the turn just like Stop", () => {
+  const dir = dataDir();
+  run("UserPromptSubmit", { session_id: "s1", prompt: "hello" }, dir);
+  assert.match(run("StopFailure", { session_id: "s1", error: "refusal" }, dir).systemMessage, /· turn \d+s$/);
+  assert.match(contextOf(run("UserPromptSubmit", { session_id: "s1", prompt: "again" }, dir)), /Previous turn: \d+s\./);
+});
+
 test("unwired events are silent no-ops", () => {
   const dir = dataDir();
   for (const event of ["Notification", "SubagentStop", "PreCompact", ""]) {

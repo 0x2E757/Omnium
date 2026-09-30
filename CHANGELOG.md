@@ -103,6 +103,20 @@ listed here — only features (MINOR) and notable fixes. Format follows
 ### 0.3.11 — 2026-07-06
 - Consolidated into the Omnium marketplace (baseline; supersedes the standalone 0.1.64 line).
 
+## spatium
+
+### 0.2.0 — 2026-09-30
+- **Subagents get their own clock.** Each subagent is told what the `Spatium:`
+  lines mean, and its ticks show its own run time, plus your prompt's budget
+  share when you set one. Before, a subagent saw your prompt's time with no
+  label and could take it for its own, and it repeated the same guidance on
+  every tick.
+- **Budgets for subagents.** An orchestrating agent starts the `Agent`
+  prompt with `/spatium:budget <duration>` or `/spatium:limit <duration>`,
+  and that subagent works under its own guide budget or hard limit.
+- **Fixed:** a turn that ended in a failed or refused API call (`StopFailure`)
+  was never closed, so the next prompt's header reported wrong times.
+
 ## statusline
 
 ### 0.2.0 — 2026-09-29

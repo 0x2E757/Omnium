@@ -6,7 +6,11 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs", "SessionStart", "${CLAUDE_PLUGIN_DATA}"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "SessionStart",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
             "timeout": 5
           }
         ]
@@ -18,7 +22,11 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs", "UserPromptSubmit", "${CLAUDE_PLUGIN_DATA}"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "UserPromptSubmit",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
             "timeout": 5
           }
         ]
@@ -26,12 +34,32 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "AskUserQuestion",
+        "matcher": "AskUserQuestion|Agent",
         "hooks": [
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs", "PreToolUse", "${CLAUDE_PLUGIN_DATA}"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "PreToolUse",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "SubagentStart",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
             "timeout": 5
           }
         ]
@@ -43,7 +71,11 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs", "PostToolUse", "${CLAUDE_PLUGIN_DATA}"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "PostToolUse",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
             "timeout": 5
           }
         ]
@@ -55,7 +87,11 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs", "PostToolUseFailure", "${CLAUDE_PLUGIN_DATA}"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "PostToolUseFailure",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
             "timeout": 5
           }
         ]
@@ -67,7 +103,27 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs", "Stop", "${CLAUDE_PLUGIN_DATA}"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "Stop",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs",
+              "StopFailure",
+              "${CLAUDE_PLUGIN_DATA}"
+            ],
             "timeout": 5
           }
         ]

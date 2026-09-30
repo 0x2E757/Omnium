@@ -78,26 +78,59 @@ start the follow-up prompt with `/spatium:continue`.
 Every budget declaration also tells the agent never to trade correctness for
 time silently: if it skips something because of the budget, it has to say so.
 
+## Subagents
+
+Every subagent gets its own clock, started when it starts. It is told what the
+`Spatium:` lines mean, and its ticks show its own run time. When your prompt
+is under a budget, they also show that budget's share:
+
+```
+Spatium: 14:32:10, your run time 4m12s. Top-level prompt: 22m of 30m guide budget (73%).
+```
+
+An orchestrating agent can give a subagent a budget of its own by starting the
+`Agent` tool's prompt with the same marker you would type:
+
+```
+/spatium:limit 10m Review the diff for correctness bugs.
+```
+
+The subagent then works under that guide budget or hard limit, with the same
+rules and guidance steps as a prompt. The marker stays in its prompt, where it
+reads as a plain instruction. If the top-level prompt's hard limit is used up,
+every subagent tick tells it to finish at the next safe point and return what
+it has. A subagent resumed with `SendMessage` starts a fresh clock without a
+budget: like a prompt's budget, a subagent's belongs to one task.
+
 ## How it works
 
-One file, `hooks/spatium.mjs`, wired in `hooks/hooks.json` for six events:
+One file, `hooks/spatium.mjs`, wired in `hooks/hooks.json` for eight events:
 
 | Event | Behavior |
 |-------|----------|
 | `SessionStart` | A short primer explaining the `Spatium:` lines, plus the current time. After compaction or resume it restates the active budget. Also prunes state files untouched for a week. |
 | `UserPromptSubmit` | Starts the turn clock and reads a `/spatium:*` command from the raw prompt. Emits the time header and, when a budget is set, the budget declaration, plus your opening stamp. A background-task notification also arrives here, often mid-turn; it only gets a tick and never restarts the clock or clears the budget. |
-| `PreToolUse` (`AskUserQuestion` only) | Marks the start of a wait on the user. |
-| `PostToolUse`, `PostToolUseFailure` | Emits the tick line and any newly reached guidance. |
-| `Stop` | Records the turn for the next prompt's header and shows you the closing stamp (with the budget share when there is one). |
+| `PreToolUse` (`AskUserQuestion`, `Agent`) | `AskUserQuestion` marks the start of a wait on the user. `Agent` sets the launch aside, with the budget its prompt's marker asks for, for the `SubagentStart` that follows. |
+| `SubagentStart` | Starts the subagent's own clock under that budget, and tells the subagent what the `Spatium:` lines mean. |
+| `PostToolUse`, `PostToolUseFailure` | Emits the tick line and any newly reached guidance: the main agent's, or the subagent's own. A failed `Agent` call drops the launch it set aside. |
+| `Stop`, `StopFailure` | Records the turn for the next prompt's header and shows you the closing stamp (with the budget share when there is one). `StopFailure` is how a turn ends when the API call fails or is refused. |
 
 State is one small JSON file per session in the plugin's persistent data dir
-(`${CLAUDE_PLUGIN_DATA}/sessions/<session_id>.json`). Under `--plugin-dir`,
-where there is no data dir, it goes to `<os tmpdir>/claude-spatium/sessions/`.
-Only turn boundaries, threshold announcements and user waits write it; ordinary
-ticks only read it.
+(`${CLAUDE_PLUGIN_DATA}/sessions/<session_id>.json`), plus one per subagent
+(`<session_id>.agent-<agent_id>.json`) and a short-lived slot for a launch in
+flight (`<session_id>.spawn.json`). Under `--plugin-dir` the data dir is
+`~/.claude/plugins/data/spatium-inline/` (observed with Claude Code 2.1.285);
+only when the hook gets no data dir at all do they go to
+`<os tmpdir>/claude-spatium/sessions/`. Only turn
+boundaries, threshold announcements, user waits and launches write them, and
+each agent writes only its own file; ordinary ticks only read.
 
-A subagent's tool calls tick too and show the parent prompt's budget. A
-subagent never uses up an announcement meant for the main agent.
+`SubagentStart` does not say which `Agent` call started the subagent. Spatium
+relies on an ordering observed in every case tried (sequential, parallel,
+background, nested, forked, worktree-isolated): each `Agent` call's
+`SubagentStart` fires before the next `Agent` call's `PreToolUse`. A slot older
+than a minute is ignored. A subagent whose clock is missing (it started before
+0.2.0) ticks the top-level prompt's time, labeled as such.
 
 The hook **fails open**. Garbage input, a corrupt state file or an unsafe
 session id each degrade to a clock-only line or to silence, never to an error.
@@ -106,7 +139,7 @@ dependencies.
 
 ## Cost
 
-Every tool call spawns one short `node` process (the node startup dominates; the
+Every tool call spawns one short `node` process (so does each subagent start) (the node startup dominates; the
 script itself takes a few milliseconds) and adds about 30-40 tokens of context.
 A long task with 150 tool calls therefore spends a few thousand tokens on
 time-keeping. The lines are appended at the end of the context, so they never

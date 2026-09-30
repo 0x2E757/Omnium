@@ -6,10 +6,20 @@
 //   node "${CLAUDE_PLUGIN_ROOT}/hooks/spatium.mjs" <Event> "${CLAUDE_PLUGIN_DATA}"
 // Events: SessionStart (primer), UserPromptSubmit (turn start; parses
 // /spatium:budget, /spatium:limit, /spatium:continue from the raw prompt),
-// PreToolUse on AskUserQuestion (a wait on the user begins), PostToolUse and
-// PostToolUseFailure (the tick line), Stop (records the turn). UserPromptSubmit
-// and Stop also stamp the clock for the USER as a systemMessage, which the model
-// never sees; SPATIUM_USER_STAMPS=0 turns those stamps off.
+// PreToolUse on AskUserQuestion (a wait on the user begins) and on Agent (a
+// budget marker at the start of the subagent's prompt is set aside),
+// SubagentStart (the subagent's own clock starts, under that budget),
+// PostToolUse and PostToolUseFailure (the tick line), Stop and StopFailure
+// (record the turn). UserPromptSubmit and Stop also stamp the clock for the
+// USER as a systemMessage, which the model never sees; SPATIUM_USER_STAMPS=0
+// turns those stamps off.
+//
+// SubagentStart carries only agent_id and agent_type — no tool_use_id, no
+// prompt — so the budget travels through a one-slot "pending spawn" that the
+// Agent call's PreToolUse writes and the next SubagentStart takes. That rests
+// on an observed ordering (DESIGN.md D23): every Agent call's SubagentStart
+// fires before the next Agent call's PreToolUse, sequential or parallel,
+// foreground or background, nested or not.
 //
 // ONE file on purpose (DESIGN.md D22): the hook runs on every tool call, so it
 // is a single module importing only node builtins — no second module to
@@ -18,11 +28,12 @@
 // or fs) and exported for tests; the shell below it runs only when this file is
 // the entry point, so importing the module has no side effects.
 //
-// State is one small JSON file per session. Only turn boundaries, threshold
-// announcements and user waits write it; ordinary ticks only read it, so
-// parallel tool calls never race on a write that matters (a duplicated
-// announcement is the worst case). The hook fails OPEN: any error emits
-// nothing or a clock-only line, never a failure.
+// State is one small JSON file per session, plus one per subagent and the
+// pending-spawn slot. Only turn boundaries, threshold announcements, user waits
+// and spawns write them, and each agent writes only its own file; ordinary ticks
+// only read, so parallel tool calls and parallel subagents never race on a
+// write that matters (a duplicated announcement is the worst case). The hook
+// fails OPEN: any error emits nothing or a clock-only line, never a failure.
 
 import { mkdirSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -31,9 +42,15 @@ import { fileURLToPath } from "node:url";
 
 /** The tool whose runtime is the user's time, not the agent's. */
 export const ASK_TOOL = "AskUserQuestion";
+/** The tool that starts a subagent; its prompt may open with a budget marker. */
+export const AGENT_TOOL = "Agent";
 
 // A budget above a day is a typo, not a plan; refusing it beats a silent 0%.
 const MAX_BUDGET_MS = 24 * 3_600_000;
+// SubagentStart followed its Agent call within ~1 s in every observed run
+// (worktree setup included); a minute is generous, yet a slot left behind by a
+// launch that never happened cannot budget a subagent started much later.
+const PENDING_MAX_AGE_MS = 60_000;
 // Sessions are resumable for days; a week keeps them and still bounds the dir.
 const STATE_MAX_AGE_MS = 7 * 24 * 3_600_000;
 // Echoed user input is capped so a pasted wall of text cannot flood the context.
@@ -52,6 +69,8 @@ const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
  *   lastStop: number | null,
  *   lastTurn: TurnSummary | null,
  * }} State
+ * A subagent's own state uses the same shape: turnStart is when it started.
+ * @typedef {{ at: number, toolUseId: string | null, budget: Budget | null, unreadable: string | null }} PendingSpawn
  */
 
 /** The state of a session nothing has been recorded for yet. @returns {State} */
@@ -201,17 +220,20 @@ const NEVER_SILENTLY =
   "Never trade correctness for time silently: if you skip or cut anything (tests, checks, edge cases) " +
   "because of the budget, say so in your report.";
 
-/** The rules stated when a budget is declared. @param {Budget} budget */
-function declaration(budget) {
+/**
+ * The rules stated when a budget is declared.
+ * @param {Budget} budget @param {string} [scope] whose budget: "this prompt", or "your task" for a subagent
+ */
+function declaration(budget, scope = "this prompt") {
   if (budget.mode === "hard") {
     return (
-      `Hard time limit for this prompt: ${formatDuration(budget.ms)}. You enforce it yourself — nothing will stop ` +
+      `Hard time limit for ${scope}: ${formatDuration(budget.ms)}. You enforce it yourself — nothing will stop ` +
       "you. Scope the work to fit; at 80% start wrapping up; at 100% stop at the next safe point, leave the work " +
       `consistent, and report what is done, what is not, and what remains. ${NEVER_SILENTLY}`
     );
   }
   return (
-    `Time budget for this prompt: ${formatDuration(budget.ms)} — a guide, not a stop. The share used is reported ` +
+    `Time budget for ${scope}: ${formatDuration(budget.ms)} — a guide, not a stop. The share used is reported ` +
     "after every tool call and may pass 100%. Scope the work to fit; if it clearly needs more, say so early " +
     `rather than rushing. ${NEVER_SILENTLY}`
   );
@@ -249,7 +271,15 @@ const PRIMER =
   "and time zone) and after every tool call (the clock and how long the current prompt has run, excluding time " +
   "spent waiting on the user). Use them to judge elapsed time and estimate durations instead of guessing. When " +
   "the user sets a time budget for a prompt (/spatium:budget is a guide, /spatium:limit a hard limit you enforce " +
-  "on yourself), the lines also show the share used; it can pass 100%.";
+  "on yourself), the lines also show the share used; it can pass 100%. To give a subagent its own budget, start " +
+  "the Agent tool's prompt with /spatium:budget <duration> or /spatium:limit <duration>.";
+
+// A subagent never sees SessionStart or UserPromptSubmit, so without this it
+// would get `Spatium:` lines with no idea what they measure.
+const SUBAGENT_PRIMER =
+  "Spatium is active: after every tool call a `Spatium:` line gives the clock and how long you, this subagent, " +
+  "have been running, plus the top-level prompt's time budget when the user set one. Use them to judge elapsed " +
+  "time instead of guessing.";
 
 /**
  * SessionStart context: the primer, the current time, and — after compaction
@@ -304,7 +334,7 @@ function promptHeader(state, now) {
  * @returns {{ state: State, context: string, stamp: string | null }}
  */
 export function onPrompt(state, prompt, now) {
-  if (isNotification(prompt)) return { state, context: tickLine(state, now, false), stamp: null };
+  if (isNotification(prompt)) return { state, context: tickLine(state, now), stamp: null };
   const result = startTurn(state, prompt, now);
   let stamp = `Spatium: ${formatClock(now)}`;
   const { budget, turnStart } = result.state;
@@ -383,11 +413,11 @@ function continueTurn(state, arg, now, header, fresh) {
 }
 
 /**
- * The one-line tick: the clock, then the turn time or the budget share, then
- * any time spent waiting on the user.
- * @param {State} state @param {number} now @param {boolean} subagent
+ * The main agent's one-line tick: the clock, then the turn time or the budget
+ * share, then any time spent waiting on the user.
+ * @param {State} state @param {number} now
  */
-function tickLine(state, now, subagent) {
+function tickLine(state, now) {
   const clock = formatClock(now);
   if (state.turnStart === null) return `Spatium: ${clock}.`;
   const elapsed = agentElapsed(state, now);
@@ -395,11 +425,56 @@ function tickLine(state, now, subagent) {
   if (state.budget === null) {
     line = `Spatium: ${clock}, turn time ${formatDuration(elapsed)}.`;
   } else {
-    const whose = subagent ? " — the parent prompt's budget" : "";
-    line = `Spatium: ${clock}, ${shareText(elapsed, state.budget)}${whose}.`;
+    line = `Spatium: ${clock}, ${shareText(elapsed, state.budget)}.`;
   }
   if (state.waitedMs >= 1_000) line += ` Waiting on the user (not counted): ${formatDuration(state.waitedMs)}.`;
   return line;
+}
+
+/**
+ * The guidance a budgeted clock owes at this tick — the stop order past a hard
+ * limit, or the notice for a newly reached step — and the step reached, which
+ * the caller records as announced.
+ * @param {State} state @param {number} now
+ * @returns {{ text: string, step: number }}
+ */
+function guidanceFor(state, now) {
+  if (state.turnStart === null || state.budget === null) return { text: "", step: 0 };
+  const percent = percentOf(agentElapsed(state, now), state.budget);
+  const step = highestThreshold(percent);
+  if (state.budget.mode === "hard" && percent >= 100) return { text: ` ${hardStop(percent)}`, step };
+  if (step > state.announced) return { text: ` ${notice(state.budget, step, percent)}`, step };
+  return { text: "", step };
+}
+
+/**
+ * What a subagent is told about the top-level prompt: its budget share, and to
+ * finish once a hard limit there is spent. Guidance steps stay the main agent's
+ * business; a subagent could never record them, so it would repeat them.
+ * @param {State} parent @param {number} now
+ */
+function parentNote(parent, now) {
+  if (parent.turnStart === null || parent.budget === null) return "";
+  const elapsed = agentElapsed(parent, now);
+  let note = ` Top-level prompt: ${shareText(elapsed, parent.budget)}.`;
+  if (parent.budget.mode === "hard" && elapsed >= parent.budget.ms) {
+    note += " Its hard limit is used up: finish at the next safe point and return what you have.";
+  }
+  return note;
+}
+
+/**
+ * The tick of a subagent that has no clock of its own (it started before this
+ * version, or its SubagentStart failed): the top-level prompt's time, labeled
+ * as such so the subagent never takes it for its own.
+ * @param {State} parent @param {number} now
+ */
+function parentTick(parent, now) {
+  const clock = formatClock(now);
+  if (parent.turnStart === null) return `Spatium: ${clock}.`;
+  const elapsed = agentElapsed(parent, now);
+  if (parent.budget === null) return `Spatium: ${clock}, top-level prompt time ${formatDuration(elapsed)}.`;
+  return `Spatium: ${clock}, top-level prompt: ${shareText(elapsed, parent.budget)}.`;
 }
 
 /**
@@ -414,36 +489,108 @@ export function onPreTool(state, toolName, now) {
 }
 
 /**
- * PostToolUse / PostToolUseFailure: the tick line, plus guidance when a new
- * step is reached (repeated on every tick once a hard limit is spent).
- * `changed` tells the shell whether the state must be written. A subagent sees
- * the parent prompt's budget but never records an announcement — otherwise the
- * main agent, whose turn it is, would miss it.
+ * PostToolUse / PostToolUseFailure of the main agent: the tick line, plus
+ * guidance when a new step is reached (repeated on every tick once a hard limit
+ * is spent). `changed` tells the shell whether the state must be written. With
+ * `subagent` set, this is the fallback tick of a subagent with no clock of its
+ * own: the labeled top-level time, no guidance, nothing recorded.
  * @param {State} state @param {unknown} toolName @param {number} now @param {boolean} subagent
  * @returns {{ state: State, changed: boolean, context: string }}
  */
 export function onPostTool(state, toolName, now, subagent) {
+  if (subagent) return { state, changed: false, context: parentTick(state, now) };
   let next = state;
   let changed = false;
-  if (toolName === ASK_TOOL && state.waitStart !== null && !subagent) {
+  if (toolName === ASK_TOOL && state.waitStart !== null) {
     next = { ...state, waitedMs: state.waitedMs + Math.max(0, now - state.waitStart), waitStart: null };
     changed = true;
   }
-  let context = tickLine(next, now, subagent);
-  if (next.turnStart !== null && next.budget !== null) {
-    const percent = percentOf(agentElapsed(next, now), next.budget);
-    const step = highestThreshold(percent);
-    if (next.budget.mode === "hard" && percent >= 100) {
-      context += ` ${hardStop(percent)}`;
-    } else if (step > next.announced) {
-      context += ` ${notice(next.budget, step, percent)}`;
-    }
-    if (step > next.announced && !subagent) {
-      next = { ...next, announced: step };
-      changed = true;
-    }
+  const guidance = guidanceFor(next, now);
+  if (guidance.step > next.announced) {
+    next = { ...next, announced: guidance.step };
+    changed = true;
   }
-  return { state: next, changed, context };
+  return { state: next, changed, context: tickLine(next, now) + guidance.text };
+}
+
+// ---------------------------------------------------------------- subagents
+
+/**
+ * PreToolUse on Agent: set the launch aside for the SubagentStart that follows,
+ * with the budget a leading /spatium:budget or /spatium:limit marker in the
+ * subagent's prompt asks for. Every Agent call writes the slot, marker or not,
+ * so a slot can only ever reach the subagent of the call right before it.
+ * @param {unknown} toolInput the Agent call's tool_input
+ * @param {unknown} toolUseId
+ * @param {number} now
+ * @returns {PendingSpawn}
+ */
+export function onSpawn(toolInput, toolUseId, now) {
+  const prompt = toolInput !== null && typeof toolInput === "object" ? /** @type {any} */ (toolInput).prompt : undefined;
+  /** @type {PendingSpawn} */
+  const spawn = { at: now, toolUseId: typeof toolUseId === "string" ? toolUseId : null, budget: null, unreadable: null };
+  const command = parseCommand(prompt);
+  // /spatium:continue carries a prompt's own budget over; a fresh subagent has none to carry.
+  if (command === null || command.name === "continue") return spawn;
+  const ms = parseDuration(command.arg);
+  if (ms === null) return { ...spawn, unreadable: command.arg };
+  return { ...spawn, budget: { ms, mode: command.name === "limit" ? "hard" : "soft" } };
+}
+
+/**
+ * PostToolUseFailure on Agent: a launch that failed (an unknown agent type, a
+ * denied call) starts no subagent, so its slot is dropped; a slot written by a
+ * different call is kept.
+ * @param {PendingSpawn | null} pending @param {unknown} toolUseId
+ * @returns {PendingSpawn | null} the slot that remains
+ */
+export function onSpawnFailure(pending, toolUseId) {
+  if (pending === null || pending.toolUseId === toolUseId) return null;
+  return pending;
+}
+
+/**
+ * SubagentStart: the subagent's own clock starts, under the pending spawn's
+ * budget when that slot is fresh. A subagent that already has a state is being
+ * resumed (SendMessage); its new run starts a fresh unbudgeted clock and leaves
+ * the slot alone, since no Agent call preceded it. `consumed` tells the shell
+ * to delete the slot.
+ * @param {PendingSpawn | null} pending @param {State | null} existing @param {number} now
+ * @returns {{ state: State, context: string, consumed: boolean }}
+ */
+export function onSubagentStart(pending, existing, now) {
+  const resumed = existing !== null;
+  const usable = !resumed && pending !== null && now - pending.at <= PENDING_MAX_AGE_MS ? pending : null;
+  const budget = usable === null ? null : usable.budget;
+  const state = { ...emptyState(), turnStart: now, budget };
+  let context = `${SUBAGENT_PRIMER} You were ${resumed ? "resumed" : "started"} at ${formatStamp(now)}.`;
+  if (usable !== null && usable.unreadable !== null) {
+    context += ` Spatium could not read the duration "${echo(usable.unreadable)}"; you run without a time budget.`;
+  }
+  if (budget !== null) context += ` ${declaration(budget, "your task")}`;
+  return { state, context, consumed: !resumed && pending !== null };
+}
+
+/**
+ * PostToolUse / PostToolUseFailure inside a subagent that has its own clock:
+ * its run time or its budget share, its own guidance (recorded in its own
+ * state), then the top-level prompt's budget when there is one.
+ * @param {State} agent the subagent's own state @param {State} parent the session's prompt state @param {number} now
+ * @returns {{ state: State, changed: boolean, context: string }}
+ */
+export function onSubagentTool(agent, parent, now) {
+  const clock = formatClock(now);
+  const elapsed = agentElapsed(agent, now);
+  let context;
+  if (agent.budget === null) {
+    context = `Spatium: ${clock}, your run time ${formatDuration(elapsed)}.`;
+  } else {
+    context = `Spatium: ${clock}, ${shareText(elapsed, agent.budget)}.`;
+  }
+  const guidance = guidanceFor(agent, now);
+  context += guidance.text + parentNote(parent, now);
+  if (guidance.step > agent.announced) return { state: { ...agent, announced: guidance.step }, changed: true, context };
+  return { state: agent, changed: false, context };
 }
 
 /**
@@ -467,42 +614,71 @@ export function onStop(state, now, stamps = true) {
 
 // ================================================================ IO shell
 
+/** @param {unknown} v @returns {number | null} */
+function finiteOrNull(v) {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+/** Narrow an untrusted parsed value to a Budget. @param {any} b @returns {Budget | null} */
+function normalizeBudget(b) {
+  const valid = b && finiteOrNull(b.ms) !== null && b.ms > 0 && (b.mode === "soft" || b.mode === "hard");
+  return valid ? { ms: b.ms, mode: b.mode } : null;
+}
+
 /** Narrow an untrusted parsed value to a State, falling back to empty. @param {any} raw @returns {State} */
 function normalizeState(raw) {
   const state = emptyState();
   if (raw === null || typeof raw !== "object") return state;
-  /** @param {unknown} v */
-  const time = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
-  /** @param {any} b @returns {Budget | null} */
-  const budget = (b) =>
-    b && time(b.ms) !== null && b.ms > 0 && (b.mode === "soft" || b.mode === "hard") ? { ms: b.ms, mode: b.mode } : null;
-  state.turnStart = time(raw.turnStart);
-  state.budget = budget(raw.budget);
-  state.announced = time(raw.announced) ?? 0;
-  state.waitStart = time(raw.waitStart);
-  state.waitedMs = time(raw.waitedMs) ?? 0;
-  state.lastStop = time(raw.lastStop);
-  if (raw.lastTurn && time(raw.lastTurn.elapsedMs) !== null) {
-    state.lastTurn = { elapsedMs: raw.lastTurn.elapsedMs, budget: budget(raw.lastTurn.budget) };
+  state.turnStart = finiteOrNull(raw.turnStart);
+  state.budget = normalizeBudget(raw.budget);
+  state.announced = finiteOrNull(raw.announced) ?? 0;
+  state.waitStart = finiteOrNull(raw.waitStart);
+  state.waitedMs = finiteOrNull(raw.waitedMs) ?? 0;
+  state.lastStop = finiteOrNull(raw.lastStop);
+  if (raw.lastTurn && finiteOrNull(raw.lastTurn.elapsedMs) !== null) {
+    state.lastTurn = { elapsedMs: raw.lastTurn.elapsedMs, budget: normalizeBudget(raw.lastTurn.budget) };
   }
   return state;
 }
 
-/** @param {string} file @returns {State} */
-function loadState(file) {
+/** Narrow an untrusted parsed value to a PendingSpawn, or null. @param {any} raw @returns {PendingSpawn | null} */
+function normalizePending(raw) {
+  if (raw === null || typeof raw !== "object" || finiteOrNull(raw.at) === null) return null;
+  return {
+    at: raw.at,
+    toolUseId: typeof raw.toolUseId === "string" ? raw.toolUseId : null,
+    budget: normalizeBudget(raw.budget),
+    unreadable: typeof raw.unreadable === "string" ? raw.unreadable : null,
+  };
+}
+
+/** @param {string} file @returns {unknown} the parsed file, or null when absent or corrupt */
+function readJson(file) {
   try {
-    return normalizeState(JSON.parse(readFileSync(file, "utf8")));
+    return JSON.parse(readFileSync(file, "utf8"));
   } catch {
-    return emptyState(); // absent or corrupt: a fresh session is the safe reading
+    return null; // absent or corrupt: nothing recorded is the safe reading
   }
 }
 
-/** Write via a temp file and rename, so a reader never sees half a file. @param {string} file @param {State} state */
-function saveState(file, state) {
+/** @param {string} file @returns {State} */
+function loadState(file) {
+  return normalizeState(readJson(file));
+}
+
+/** A subagent's own state, or null when it has none yet. @param {string | null} file @returns {State | null} */
+function loadAgentState(file) {
+  if (file === null) return null;
+  const raw = readJson(file);
+  return raw === null ? null : normalizeState(raw);
+}
+
+/** Write via a temp file and rename, so a reader never sees half a file. @param {string} file @param {unknown} value */
+function saveJson(file, value) {
   const temp = `${file}.${process.pid}.tmp`;
   try {
     mkdirSync(join(file, ".."), { recursive: true });
-    writeFileSync(temp, JSON.stringify(state));
+    writeFileSync(temp, JSON.stringify(value));
     renameSync(temp, file);
   } catch {
     try {
@@ -510,6 +686,15 @@ function saveState(file, state) {
     } catch {
       // nothing to clean up; losing one write only costs a repeated notice
     }
+  }
+}
+
+/** @param {string} file */
+function removeFile(file) {
+  try {
+    unlinkSync(file);
+  } catch {
+    // already gone (a parallel hook took it first) or locked: pruning catches a leftover
   }
 }
 
@@ -554,9 +739,16 @@ function main() {
   const event = process.argv[2] || input.hook_event_name || "";
   const dataDir = process.argv[3] || join(tmpdir(), "claude-spatium");
   const sessionsDir = join(dataDir, "sessions");
-  // The session id becomes a file name, so anything but a plain token is refused.
+  // Ids become file names, so anything but a plain token is refused.
+  const safeToken = /^[A-Za-z0-9_-]{1,128}$/;
   const sessionId = typeof input.session_id === "string" ? input.session_id : "";
-  const file = /^[A-Za-z0-9_-]{1,128}$/.test(sessionId) ? join(sessionsDir, `${sessionId}.json`) : null;
+  const base = safeToken.test(sessionId) ? join(sessionsDir, sessionId) : null;
+  const file = base === null ? null : `${base}.json`;
+  const spawnFile = base === null ? null : `${base}.spawn.json`;
+  // The harness stamps agent_id on every payload fired inside a subagent.
+  const agentId = typeof input.agent_id === "string" ? input.agent_id : "";
+  const subagent = agentId !== "";
+  const agentFile = base !== null && safeToken.test(agentId) ? `${base}.agent-${agentId}.json` : null;
   const state = file === null ? emptyState() : loadState(file);
   const now = Date.now();
   // User-facing stamps are on unless explicitly switched off; the budget report is not optional.
@@ -567,23 +759,45 @@ function main() {
     emitContext(event, onSessionStart(state, input.source, now));
   } else if (event === "UserPromptSubmit") {
     const result = onPrompt(state, input.prompt, now);
-    if (file !== null && result.state !== state) saveState(file, result.state);
+    if (file !== null && result.state !== state) saveJson(file, result.state);
     /** @type {Record<string, unknown>} */
     const out = { hookSpecificOutput: { hookEventName: event, additionalContext: result.context } };
     if (stamps && result.stamp !== null) out.systemMessage = result.stamp;
     emit(out);
   } else if (event === "PreToolUse") {
+    if (input.tool_name === AGENT_TOOL) {
+      if (spawnFile !== null) saveJson(spawnFile, onSpawn(input.tool_input, input.tool_use_id, now));
+      return;
+    }
     const next = onPreTool(state, input.tool_name, now);
-    if (next !== null && file !== null) saveState(file, next);
-  } else if (event === "PostToolUse" || event === "PostToolUseFailure") {
-    // The harness stamps agent_id on every payload fired inside a subagent.
-    const subagent = typeof input.agent_id === "string" && input.agent_id !== "";
-    const result = onPostTool(state, input.tool_name, now, subagent);
-    if (result.changed && file !== null) saveState(file, result.state);
+    if (next !== null && file !== null) saveJson(file, next);
+  } else if (event === "SubagentStart") {
+    // Without a file to keep its clock in, the subagent still gets the primer,
+    // but the slot is left for a subagent that can use it.
+    const pending = agentFile === null || spawnFile === null ? null : normalizePending(readJson(spawnFile));
+    const result = onSubagentStart(pending, loadAgentState(agentFile), now);
+    if (agentFile !== null) saveJson(agentFile, result.state);
+    if (result.consumed && spawnFile !== null) removeFile(spawnFile);
     emitContext(event, result.context);
-  } else if (event === "Stop") {
+  } else if (event === "PostToolUse" || event === "PostToolUseFailure") {
+    if (event === "PostToolUseFailure" && input.tool_name === AGENT_TOOL && spawnFile !== null) {
+      const pending = normalizePending(readJson(spawnFile));
+      if (pending !== null && onSpawnFailure(pending, input.tool_use_id) === null) removeFile(spawnFile);
+    }
+    const agent = subagent ? loadAgentState(agentFile) : null;
+    if (agent !== null && agentFile !== null) {
+      const result = onSubagentTool(agent, state, now);
+      if (result.changed) saveJson(agentFile, result.state);
+      emitContext(event, result.context);
+      return;
+    }
+    const result = onPostTool(state, input.tool_name, now, subagent);
+    if (result.changed && file !== null) saveJson(file, result.state);
+    emitContext(event, result.context);
+  } else if (event === "Stop" || event === "StopFailure") {
+    // A refused or failed API call ends the turn with StopFailure instead of Stop.
     const result = onStop(state, now, stamps);
-    if (file !== null) saveState(file, result.state);
+    if (file !== null) saveJson(file, result.state);
     if (result.message !== null) emit({ systemMessage: result.message });
   }
 }

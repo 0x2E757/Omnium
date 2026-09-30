@@ -9,7 +9,11 @@ import {
   onPreTool,
   onPrompt,
   onSessionStart,
+  onSpawn,
+  onSpawnFailure,
   onStop,
+  onSubagentStart,
+  onSubagentTool,
   parseCommand,
   parseDuration,
 } from "../../plugins/spatium/hooks/spatium.mjs";
@@ -174,13 +178,112 @@ test("a hard limit tells the agent to wrap up at 80% and repeats the stop order 
   assert.match(overAgain.context, /HARD LIMIT REACHED/);
 });
 
-test("a subagent sees the parent's budget but never consumes an announcement", () => {
+// A subagent without a clock of its own (it started before this version, or its
+// SubagentStart failed) must not pass the top-level time off as its own, and
+// must not repeat guidance it can never record.
+test("a subagent without its own clock sees the top-level prompt, labeled, with no guidance", () => {
   const state = started("/spatium:budget 10m x");
   const sub = onPostTool(state, "Read", T0 + 5 * MINUTE, true);
-  assert.match(sub.context, /Half/);
-  assert.match(sub.context, /parent/);
+  assert.match(sub.context, /^Spatium: 14:25:06, top-level prompt: 5m of 10m guide budget \(50%\)\.$/);
   assert.equal(sub.changed, false);
+  assert.match(onPostTool(started("x"), "Read", T0 + 5 * MINUTE, true).context, /top-level prompt time 5m\.$/);
   assert.match(onPostTool(state, "Read", T0 + 5 * MINUTE, false).context, /Half/);
+});
+
+test("onSpawn reads a budget marker at the start of an Agent prompt", () => {
+  assert.deepEqual(onSpawn({ prompt: "/spatium:limit 10m review it" }, "tu1", T0), {
+    at: T0,
+    toolUseId: "tu1",
+    budget: { ms: 10 * MINUTE, mode: "hard" },
+    unreadable: null,
+  });
+  assert.deepEqual(onSpawn({ prompt: "/spatium:budget 90s x" }, "tu1", T0).budget, { ms: 90_000, mode: "soft" });
+  assert.equal(onSpawn({ prompt: "/spatium:budget soon x" }, "tu1", T0).unreadable, "soon");
+  for (const input of [{ prompt: "plain task" }, { prompt: "/spatium:continue +5m" }, {}, null]) {
+    const spawn = onSpawn(input, undefined, T0);
+    assert.equal(spawn.budget, null);
+    assert.equal(spawn.unreadable, null);
+    assert.equal(spawn.toolUseId, null);
+  }
+});
+
+test("a failed Agent call drops its own pending spawn and leaves any other one", () => {
+  const spawn = onSpawn({ prompt: "/spatium:limit 10m x" }, "tu1", T0);
+  assert.equal(onSpawnFailure(spawn, "tu1"), null);
+  assert.equal(onSpawnFailure(spawn, "tu2"), spawn);
+  assert.equal(onSpawnFailure(null, "tu1"), null);
+});
+
+test("SubagentStart starts the subagent's own clock under the pending budget and explains the lines", () => {
+  const spawn = onSpawn({ prompt: "/spatium:limit 10m x" }, "tu1", T0);
+  const { state, context, consumed } = onSubagentStart(spawn, null, T0 + 1_000);
+  assert.equal(consumed, true);
+  assert.equal(state.turnStart, T0 + 1_000);
+  assert.deepEqual(state.budget, { ms: 10 * MINUTE, mode: "hard" });
+  assert.match(context, /Spatium is active/);
+  assert.match(context, /subagent/);
+  assert.match(context, /started at 2026-09-29 14:20:07 [+-]\d\d:\d\d \(Tue\)\./);
+  assert.match(context, /Hard time limit for your task: 10m/);
+  assert.match(context, /correctness/);
+  assert.doesNotMatch(context, /\bnow\b/i);
+});
+
+test("SubagentStart without a usable spawn runs the subagent unbudgeted", () => {
+  const plain = onSubagentStart(onSpawn({ prompt: "x" }, "tu1", T0), null, T0);
+  assert.equal(plain.state.budget, null);
+  assert.doesNotMatch(plain.context, /time limit|budget for your task/i);
+  const stale = onSubagentStart(onSpawn({ prompt: "/spatium:limit 10m x" }, "tu1", T0), null, T0 + 2 * MINUTE);
+  assert.equal(stale.state.budget, null);
+  assert.equal(stale.consumed, true);
+  assert.equal(onSubagentStart(null, null, T0).state.budget, null);
+  const unreadable = onSubagentStart(onSpawn({ prompt: "/spatium:budget soon x" }, "tu1", T0), null, T0);
+  assert.match(unreadable.context, /could not read the duration "soon"/);
+});
+
+// SendMessage resumes a finished subagent with the same agent_id and no Agent
+// call before it (observed live), so a pending spawn belongs to someone else.
+test("a resumed subagent restarts its clock unbudgeted and leaves the pending spawn alone", () => {
+  const earlier = onSubagentStart(onSpawn({ prompt: "/spatium:limit 10m x" }, "tu1", T0), null, T0).state;
+  const pending = onSpawn({ prompt: "/spatium:limit 5m y" }, "tu2", T0 + 20 * MINUTE);
+  const resumed = onSubagentStart(pending, earlier, T0 + 20 * MINUTE);
+  assert.equal(resumed.consumed, false);
+  assert.equal(resumed.state.turnStart, T0 + 20 * MINUTE);
+  assert.equal(resumed.state.budget, null);
+  assert.match(resumed.context, /resumed at/);
+});
+
+test("a subagent's tick shows its own run time and, when set, the top-level prompt's budget", () => {
+  const agent = onSubagentStart(onSpawn({ prompt: "x" }, "tu1", T0), null, T0).state;
+  const plain = onSubagentTool(agent, started("hi"), T0 + 4 * MINUTE);
+  assert.equal(plain.context, "Spatium: 14:24:06, your run time 4m.");
+  assert.equal(plain.changed, false);
+  const parent = started("/spatium:budget 30m x");
+  assert.equal(
+    onSubagentTool(agent, parent, T0 + 12 * MINUTE).context,
+    "Spatium: 14:32:06, your run time 12m. Top-level prompt: 12m of 30m guide budget (40%).",
+  );
+});
+
+test("a subagent's own budget announces guidance once and records it in its own state", () => {
+  const agent = onSubagentStart(onSpawn({ prompt: "/spatium:budget 10m x" }, "tu1", T0), null, T0).state;
+  const half = onSubagentTool(agent, emptyState(), T0 + 5 * MINUTE);
+  assert.match(half.context, /^Spatium: 14:25:06, 5m of 10m guide budget \(50%\)\. Half/);
+  assert.equal(half.changed, true);
+  assert.equal(half.state.announced, 50);
+  const again = onSubagentTool(half.state, emptyState(), T0 + 6 * MINUTE);
+  assert.doesNotMatch(again.context, /Half/);
+  assert.equal(again.changed, false);
+});
+
+test("a subagent's hard limit repeats its stop order, and a spent top-level hard limit tells it to finish", () => {
+  const agent = onSubagentStart(onSpawn({ prompt: "/spatium:limit 10m x" }, "tu1", T0), null, T0).state;
+  assert.match(onSubagentTool(agent, emptyState(), T0 + 11 * MINUTE).context, /HARD LIMIT REACHED \(110%\)/);
+  const free = onSubagentStart(null, null, T0).state;
+  const spent = onSubagentTool(free, started("/spatium:limit 10m x"), T0 + 11 * MINUTE);
+  assert.match(spent.context, /Top-level prompt: 11m of 10m hard limit \(110%, over by 1m\)\./);
+  assert.match(spent.context, /hard limit is used up/);
+  const guide = onSubagentTool(free, started("/spatium:budget 10m x"), T0 + 11 * MINUTE);
+  assert.doesNotMatch(guide.context, /used up/);
 });
 
 test("time spent waiting on AskUserQuestion is not charged to the budget", () => {
@@ -256,6 +359,7 @@ test("/spatium:continue with nothing to continue starts a plain turn and says so
 
 test("SessionStart explains the time lines and restates an active budget after compaction", () => {
   assert.match(onSessionStart(emptyState(), "startup", T0), /Spatium is active/);
+  assert.match(onSessionStart(emptyState(), "startup", T0), /subagent.*Agent tool's prompt with \/spatium:budget/);
   assert.doesNotMatch(onSessionStart(emptyState(), "startup", T0), /\bnow\b/i);
   const state = started("/spatium:budget 30m x");
   assert.match(onSessionStart(state, "compact", T0 + 12 * MINUTE), /12m of 30m guide budget/);
