@@ -1,4 +1,7 @@
 related:
+  - path: DESIGN.md
+    tags:
+      - doc
   - path: plugins/cautium/hooks/hook.mjs
     tags:
       - consumer

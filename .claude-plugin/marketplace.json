@@ -8,7 +8,7 @@
     {
       "name": "cautium",
       "source": "./plugins/cautium",
-      "description": "An always-on, zero-config security conscience: a single SessionStart hook injects a three-layer primer into every session — universal security duties (secrets, injection-safe input, least-privilege authN/Z, supply-chain and crypto hygiene), a universal 0-10 change-impact rubric, and an OS-dependent risk mapping keyed on process.platform. No commands, no state, cross-platform."
+      "description": "An always-on, zero-config security conscience: a single SessionStart hook injects a three-layer primer into every session — universal security duties (secrets, injection-safe input, least-privilege authN/Z, supply-chain and crypto hygiene), a universal 0-10 change-impact rubric scoped to the host machine (not the project), and an OS-dependent risk mapping keyed on process.platform. No commands, no state, cross-platform."
     },
     {
       "name": "contextum",

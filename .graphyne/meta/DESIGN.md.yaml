@@ -2,6 +2,9 @@ related:
   - path: .expertum/2026-07-03--14-05--cross-platform-audit/review-summary.md
     tags:
       - report
+  - path: plugins/cautium/hooks/hook-lib.mjs
+    tags:
+      - doc
   - path: plugins/expertum/common/experts.mjs
     tags:
       - spec

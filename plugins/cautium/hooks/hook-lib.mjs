@@ -9,6 +9,11 @@
 // OS-DEPENDENT: the dangerous actions differ per platform (systemd/`/etc` on
 // Linux vs. services/registry on Windows), so it is selected by process.platform
 // with a generic, OS-neutral fallback for platforms without their own mapping.
+//
+// The rubric and the mapping guard the MACHINE the user works on, not the
+// project: project code, data, databases and deploys follow the project's own
+// rules (git is the one stated exception). The rubric says so outright,
+// because a rubric with an implicit scope bled into project work (DESIGN.md D24).
 
 // --- layer 1: universal security duties --------------------------------------
 
@@ -37,19 +42,38 @@ const UNIVERSAL_DUTIES =
 // --- layer 2: universal change-impact rubric ---------------------------------
 
 const RISK_RUBRIC =
-  "Change-impact discipline — before any action that changes the system or " +
-  "reaches outside it, judge its blast radius on a 0-10 scale and act by tier:\n" +
+  "Change-impact discipline — this rubric protects the machine you work on " +
+  "(physical or virtual): its OS and system configuration, installed software, " +
+  "services, network exposure, accounts, and files outside the project. " +
+  "\"The project\" is the working directory this session started in (plus any " +
+  "directories added to the session), everything under it, and the resources " +
+  "its work uses — its databases, environments, and deploy targets; in an empty " +
+  "folder, the project is that folder and what you create there. If that " +
+  "directory is a home directory, a drive or filesystem root, or a system " +
+  "directory, there is no project: everything is the machine. Before " +
+  "any action that changes the machine or reaches outside it, judge its blast " +
+  "radius on a 0-10 scale and act by tier:\n" +
   "- 0-2 (read-only or trivially reversible — reading and searching files, git " +
   "status/diff/log, editing project files, creating files, running tests, " +
   "installing pinned dependencies from a lockfile): proceed autonomously, then " +
   "report what you changed.\n" +
   "- 3-6 (moderate, recoverable — adding a new dependency, running an unfamiliar " +
-  "script, bulk file operations, installing a single known system package): get " +
-  "the user's confirmation for each step, describing the action first.\n" +
+  "script, bulk file operations outside the project, installing a single known " +
+  "system package): get the user's confirmation for each step, describing the " +
+  "action first.\n" +
   "- 7-10 (hard to reverse, outward-facing, or system-level — see the " +
   "platform-specific examples below): require explicit approval, with both a " +
   "description of the change AND a risk assessment, before acting.\n" +
-  "When unsure of a score, round up. Process management: to stop a process, " +
+  "When unsure of a score, round up — and rounding up means asking the user, " +
+  "never skipping the step or the check.\n" +
+  "Scope boundary: work inside the project — its code, tests, builds, data and " +
+  "databases (test or otherwise), environments, and deploys — is not scored by " +
+  "this rubric; it follows the project's own rules and the user's instructions. " +
+  "Only the git operations named below apply everywhere, the project included. " +
+  "Never let machine-level caution decide a project question: avoiding a test " +
+  "database and shipping unverified code instead does not reduce risk, it moves " +
+  "it to production. When a project rule is unclear, ask.\n" +
+  "Process management: to stop a process, " +
   "target its specific PID or a unique identifier (port, script/service name); " +
   "never a broad, all-instances kill that could take down unrelated processes " +
   "(the platform's exact footgun is named below).";
@@ -67,8 +91,8 @@ const GENERIC_RISK =
   "or internet unless the user explicitly asked.";
 
 const LINUX_RISK =
-  "Linux risk mapping — actions that are 7-10 on this platform: deleting files, " +
-  "`git push`, editing system configuration under `/etc`, enabling or altering " +
+  "Linux risk mapping — actions that are 7-10 on this platform: deleting files " +
+  "outside the project, `git push`, editing system configuration under `/etc`, enabling or altering " +
   "systemd units, opening firewall ports or binding a service to a public " +
   "interface, or system-wide package removal; and at the ceiling (10) changes to " +
   "the bootloader/kernel/GRUB, `/etc/fstab`, the global PATH or shell init, " +
@@ -82,7 +106,7 @@ const LINUX_RISK =
 
 const WINDOWS_RISK =
   "Windows risk mapping — actions that are 7-10 on this platform: deleting " +
-  "files, `git push`, modifying system configuration, or installing system-wide " +
+  "files outside the project, `git push`, modifying system configuration, or installing system-wide " +
   "packages (7); and at the ceiling (10) modifying the registry, the `PATH` or " +
   "global/system environment variables, OS settings, or scheduled tasks and " +
   "services, `git reset --hard`, or any command that requires elevation (UAC / " +
@@ -92,8 +116,8 @@ const WINDOWS_RISK =
   "every instance of an executable — target the specific PID.";
 
 const DARWIN_RISK =
-  "macOS risk mapping — actions that are 7-10 on this platform: deleting files, " +
-  "`git push`, editing system configuration, or installing system-wide software " +
+  "macOS risk mapping — actions that are 7-10 on this platform: deleting files " +
+  "outside the project, `git push`, editing system configuration, or installing system-wide software " +
   "(e.g. Homebrew formulae/casks) (7); and at the ceiling (10) changing " +
   "`launchd`/`launchctl` daemons or agents, disabling System Integrity " +
   "Protection (SIP) or Gatekeeper, modifying the login or global `PATH`/" +

@@ -43,8 +43,27 @@ reversible) proceed autonomously; 3–6 (moderate, recoverable) confirm each ste
 with a risk assessment. Plus process-management hygiene (kill by PID, never
 broad `pkill`/`killall`).
 
+**Scope: the machine, not the project.** The rubric protects the machine you
+work on, physical or virtual: its OS and system configuration, installed
+software, services, network exposure, accounts, and files outside the project.
+Work *inside* the project is not scored by it: code, tests, builds, data and
+databases (test or otherwise), environments, and deploys follow the project's
+own rules and your instructions. The one exception is the git operations in
+the platform mappings (`git push`, `git reset --hard`), which apply everywhere.
+"The project" is defined in the primer as the working directory the session
+started in (plus any directories added to the session), everything under it,
+and the resources its work uses (databases, environments, deploy targets). In
+an empty folder, that folder is the project. A home directory, a drive or
+filesystem root, or a system directory is never a project, so launching the
+agent in `~` or `C:\` cannot turn the whole machine into "project files".
+The boundary is stated in the primer itself. While it was implicit, the
+rubric bled into project work: an agent would avoid a shared test database as
+"outward-facing" and ship unverified code to production instead. "Round up
+when unsure" means asking the user, never skipping the check.
+
 **3. An OS-dependent risk mapping** — *which* concrete actions land in the 7–10
-tier, keyed on `process.platform`. Linux calls out `/etc`, `systemd`,
+tier, keyed on `process.platform`. Every named mapping starts with deleting
+files outside the project and `git push`. Linux calls out `/etc`, `systemd`,
 firewall/port exposure, `/etc/fstab`, GRUB, `rm -rf` on system paths, severing
 SSH access, and broad `pkill`/`killall`. Windows calls out the registry,
 `PATH`/environment variables, OS settings, scheduled tasks and services,

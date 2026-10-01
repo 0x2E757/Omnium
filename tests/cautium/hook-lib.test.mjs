@@ -41,6 +41,68 @@ test("the risk tiers read least- to most-privileged", () => {
   );
 });
 
+// --- scope: the machine, not the project -------------------------------------
+// The rubric guards the machine the user works on. When its scope was left
+// implicit, agents applied it to project work too: they scored writes to a
+// shared test database as 7-10, "rounded up", and shipped unverified code to
+// production instead. The boundary is stated outright; only git stays global.
+
+/** @type {NodeJS.Platform[]} */
+const ALL = ["linux", "win32", "darwin", "freebsd"];
+
+test("every platform scopes the rubric to the machine, not the project", () => {
+  for (const p of ALL) {
+    const ctx = securityContext(p);
+    assert.match(ctx, /protects the machine you work on/i, p);
+    // project work, databases and deploys included, follows the project's rules
+    assert.match(ctx, /work inside the project[^.]*databases[^.]*deploys[^.]*not scored by this rubric/i, p);
+    assert.match(ctx, /project's own rules and the user's instructions/i, p);
+    // git is the one exception that applies everywhere
+    assert.match(ctx, /git operations named below apply everywhere/i, p);
+  }
+});
+
+test("every platform defines 'the project' and refuses a home or root directory as one", () => {
+  for (const p of ALL) {
+    const ctx = securityContext(p);
+    // the term is anchored to something the agent can see: its working directory
+    assert.match(ctx, /"the project" is the working directory this session started in/i, p);
+    assert.match(ctx, /empty folder, the project is that folder/i, p);
+    // launched in ~ or C:\ there is no project, so nothing escapes the machine rubric
+    assert.match(ctx, /home directory[^.]*root[^.]*there is no project/i, p);
+  }
+});
+
+test("no tier scores project work: production and test databases are not rubric items", () => {
+  for (const p of ALL) {
+    const ctx = securityContext(p);
+    const tiers = ctx.slice(ctx.indexOf("0-2 ("), ctx.indexOf("explicit approval"));
+    assert.doesNotMatch(tiers, /production|test database|staging/i, p);
+  }
+});
+
+test("every platform forbids letting machine caution decide a project question", () => {
+  for (const p of ALL) {
+    const ctx = securityContext(p);
+    assert.match(ctx, /never let machine-level caution decide a project question/i, p);
+    assert.match(ctx, /moves it to production/i, p);
+    // rounding up means asking, never skipping the check
+    assert.match(ctx, /round up[^.]*ask/i, p);
+  }
+});
+
+test("file deletion is a high-tier item only outside the project; git items stay", () => {
+  for (const p of /** @type {NodeJS.Platform[]} */ (["linux", "win32", "darwin"])) {
+    const ctx = securityContext(p);
+    assert.match(ctx, /deleting files outside the project/i, p);
+    assert.doesNotMatch(ctx, /deleting files(?! outside the project)/i, p);
+    assert.match(ctx, /`git push`/, p);
+  }
+  for (const p of /** @type {NodeJS.Platform[]} */ (["linux", "win32"])) {
+    assert.match(securityContext(p), /`git reset --hard`/, p);
+  }
+});
+
 // --- OS-dependent risk mapping -----------------------------------------------
 
 test("the Linux context carries Linux-specific 7-10 examples", () => {

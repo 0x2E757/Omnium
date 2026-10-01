@@ -19,6 +19,23 @@ listed here — only features (MINOR) and notable fixes. Format follows
 ### 0.4.4 — 2026-07-06
 - Consolidated into the Omnium marketplace (baseline; supersedes the standalone 0.1.5 line).
 
+## cautium
+
+### 0.1.1 — 2026-10-01
+- **The rubric guards the machine, not your project.** On projects with a test
+  database, especially a shared one, the primer led agents to avoid writing to
+  it and ship unverified code instead. The change-impact rubric now states its
+  scope: the host machine (OS, system configuration, installed software,
+  services, network exposure, accounts, files outside the project). Project
+  code, data, databases (test or otherwise), and deploys follow the project's
+  own rules and your instructions. "The project" is the session's working
+  directory (plus added directories) and the resources its work uses; a home
+  directory, a drive or filesystem root, or a system directory never counts as
+  one. Git operations (`git push`,
+  `git reset --hard`) remain the one global exception. File deletion and bulk
+  file operations are now scored only outside the project. "Round up when
+  unsure" means asking, never skipping the check (DESIGN.md D24).
+
 ## distillum
 
 ### 0.1.1 — 2026-07-22
