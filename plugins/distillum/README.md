@@ -17,7 +17,8 @@ The split is by the kind of knowledge:
 
 - **`/distillum:to-skill`** — **procedural** knowledge (*how to do X again*): a
   procedure the session figured out the hard way becomes a reusable skill,
-  user-level (`~/.claude/skills/`) or project-level (`.claude/skills/`). The
+  user-level (`~/.claude/skills/`, or `$CLAUDE_CONFIG_DIR/skills/` when that
+  variable is set) or project-level (`.claude/skills/`). The
   command walks a quality checklist: an honesty gate (no skill unless the
   session learned something non-trivially repeatable), dedup against existing
   skills (update, don't fork the trigger surface), a portability test for

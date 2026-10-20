@@ -116,6 +116,16 @@ test("install nudge names the plugin, settings.json, the statusLine key, and a v
   );
 });
 
+test("the nudge names the settings file it is given, and ~/.claude/settings.json by default", () => {
+  const given = statusLineNudge("install", DESIRED, undefined, "/profiles/work/settings.json");
+  assert.ok(given);
+  assert.ok(given.includes("`/profiles/work/settings.json`"));
+  assert.ok(!given.includes("~/.claude/settings.json"));
+  const fallback = statusLineNudge("confirm", DESIRED, "starship prompt");
+  assert.ok(fallback);
+  assert.ok(fallback.includes("`~/.claude/settings.json`"));
+});
+
 test("install nudge is a call to action: action-required + report to the user first", () => {
   const c = statusLineNudge("install", DESIRED, undefined);
   assert.ok(c);

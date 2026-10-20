@@ -38,6 +38,13 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ## distillum
 
+### 0.1.2 — 2026-10-20
+- **`/distillum:to-skill` respects `CLAUDE_CONFIG_DIR`.** With the variable set
+  (a second profile, e.g. for work), user-level skills live in
+  `$CLAUDE_CONFIG_DIR/skills/`, but the command searched and wrote
+  `~/.claude/skills/`: a skill distilled in that profile landed in the default
+  one, invisible where it was made. It now uses the profile's own directory.
+
 ### 0.1.1 — 2026-07-22
 - **Command rename:** `/distillum:skill` → `/distillum:to-skill`,
   `/distillum:docs` → `/distillum:to-docs`. The basename `skill.md` collides
@@ -135,6 +142,12 @@ listed here — only features (MINOR) and notable fixes. Format follows
   was never closed, so the next prompt's header reported wrong times.
 
 ## statusline
+
+### 0.2.2 — 2026-10-20
+- **The setup nudge names the right settings file.** With `CLAUDE_CONFIG_DIR`
+  set, the hook already read `$CLAUDE_CONFIG_DIR/settings.json`, but told the
+  agent to install the status line in `~/.claude/settings.json`, which that
+  profile never reads. The nudge now names the file the hook actually checks.
 
 ### 0.2.1 — 2026-10-20
 - **A second Claude Code profile shows its own account.** With

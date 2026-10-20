@@ -99,10 +99,13 @@ try {
     // Sync the renderer first — that is independent of settings.json and must
     // happen even when the config can't be parsed.
     const desired = renderCommand(resolveRenderPath());
-    const { settings, parsed } = readSettings(settingsPath());
+    const file = settingsPath();
+    const { settings, parsed } = readSettings(file);
     if (parsed) {
       const existing = settings && settings.statusLine && settings.statusLine.command;
-      const context = statusLineNudge(classifyStatusLine(settings, desired), desired, existing);
+      // Name the real file: under CLAUDE_CONFIG_DIR the agent would otherwise
+      // edit ~/.claude/settings.json, which that profile never reads.
+      const context = statusLineNudge(classifyStatusLine(settings, desired), desired, existing, file);
       if (context) {
         emit({ hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: context } });
       }

@@ -88,9 +88,11 @@ export function classifyStatusLine(settings, desiredCommand) {
  * @param {"ok"|"install"|"confirm"} state
  * @param {string} desiredCommand
  * @param {string|undefined} existingCommand the statusLine currently configured
+ * @param {string} [settingsFile] the settings.json to edit; the hook passes the
+ *   real path, which differs from the default under CLAUDE_CONFIG_DIR
  * @returns {string|null}
  */
-export function statusLineNudge(state, desiredCommand, existingCommand) {
+export function statusLineNudge(state, desiredCommand, existingCommand, settingsFile = "~/.claude/settings.json") {
   if (state === "ok") return null;
 
   // The command contains double-quotes, so the value MUST be JSON-escaped when
@@ -99,7 +101,9 @@ export function statusLineNudge(state, desiredCommand, existingCommand) {
   // produced invalid JSON, which silently re-nudged every session.
   const value = JSON.stringify({ type: "command", command: desiredCommand, refreshInterval: REFRESH_INTERVAL_S });
   const target =
-    "in the user's Claude Code settings.json (`~/.claude/settings.json`), set the " +
+    "in the user's Claude Code settings.json (`" +
+    settingsFile +
+    "`), set the " +
     "top-level `statusLine` key to this exact JSON value (already valid — the inner " +
     'quotes are escaped; paste it verbatim, do NOT un-escape the `\\"`): `' +
     value +

@@ -8,8 +8,8 @@
     "hash": "4fe6272fe0322a17fcb13ada29ce133846458d1182871d8e212af837c3f96568"
   },
   "distillum": {
-    "version": "0.1.1",
-    "hash": "c6eb8e4e1923f9dd981e2ad3d4fa826dc89a94bbd7e497cdc334d222d5509636"
+    "version": "0.1.2",
+    "hash": "aa9fb2c666c010120ed7b6d4be4886dec2680aec151f84f3c96767903293b65b"
   },
   "expertum": {
     "version": "0.9.1",
@@ -32,7 +32,7 @@
     "hash": "19d9b7e5d21dbfe2bc074ca8f80c6a16d044f51e77c30ddf38f248de3370f3a1"
   },
   "statusline": {
-    "version": "0.2.1",
-    "hash": "1973ebce6eb6d8fd7725b66ee0a2791ab3a9bc895b1ab6a88f45120c2d5ead03"
+    "version": "0.2.2",
+    "hash": "4c0174c722f9c35569b5df97da63e2de9ec14f5466a4586f91882247365c1772"
   }
 }

@@ -33,7 +33,8 @@ and the hook refreshes the copy whenever the shipped renderer changes.
 
 ### Installing the status line
 
-On first run the agent is nudged to set, in your `~/.claude/settings.json`:
+On first run the agent is nudged to set, in your `~/.claude/settings.json` (or
+`$CLAUDE_CONFIG_DIR/settings.json` when that variable is set):
 
 ```json
 {

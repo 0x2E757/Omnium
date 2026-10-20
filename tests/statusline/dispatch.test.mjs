@@ -65,6 +65,13 @@ test("no settings.json: nudges to install and syncs the renderer into the data d
   );
 });
 
+test("the nudge names the CLAUDE_CONFIG_DIR settings.json, not ~/.claude/settings.json", () => {
+  const box = sandbox();
+  const c = run("SessionStart", box).hookSpecificOutput.additionalContext;
+  assert.ok(c.includes("`" + join(box.configDir, "settings.json") + "`"));
+  assert.ok(!c.includes("~/.claude/settings.json"));
+});
+
 test("our command already installed at the data path: stays quiet", () => {
   const box = sandbox();
   writeSettings(box.configDir, {

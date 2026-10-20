@@ -46,7 +46,9 @@ pure trigger-surface noise.
   `/distillum:to-docs` to the user, once, for the remainder. Never abort a valid
   procedural harvest because out-of-lane material is also present.
 - **Search for an existing skill covering this ground** — the user-level
-  skills directory (`~/.claude/skills/`), the project's (`.claude/skills/`),
+  skills directory (`~/.claude/skills/`, or `$CLAUDE_CONFIG_DIR/skills/` when
+  the `CLAUDE_CONFIG_DIR` environment variable is set: that profile never reads
+  `~/.claude`), the project's (`.claude/skills/`),
   and the skills shipped by installed plugins (your available-skills list).
   If a user- or project-level skill exists, **update it** rather than creating
   a sibling: two similar skills split the trigger surface and neither fires
@@ -58,7 +60,9 @@ pure trigger-surface noise.
 Apply the portability test: *would this procedure apply, unchanged, in another
 repository?*
 
-- **Yes** → user-level: `~/.claude/skills/<name>/SKILL.md`.
+- **Yes** → user-level: `<user skills dir>/<name>/SKILL.md`, the same
+  directory you searched above (`$CLAUDE_CONFIG_DIR/skills/` when that is set,
+  `~/.claude/skills/` otherwise).
 - **No** (it depends on this project's layout, stack, or conventions) →
   project-level: `.claude/skills/<name>/SKILL.md`, committed with the project.
 - **Both** (a general core with project-specific constants) → write the
