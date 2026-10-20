@@ -71,7 +71,8 @@ Everything the bar shows lives in `statusline/render.mjs`. Its pure core,
 `renderStatusline({ data, user, now, transcriptText })`, takes the parsed
 [status JSON](https://code.claude.com/docs/en/statusline) plus the resolved
 account, clock, and transcript text and returns the multi-line string; the IO
-shell at the bottom gathers those inputs (stdin, `~/.claude.json`, the transcript
+shell at the bottom gathers those inputs (stdin, `~/.claude.json` — or
+`$CLAUDE_CONFIG_DIR/.claude.json` when that variable is set — the transcript
 file) and prints. Edit the core to change the layout, colors, or fields. Keep it
 pure and self-contained (Node built-ins only, no relative imports): the file is
 copied standalone into the data dir, so it must run on its own, and it **fails

@@ -136,6 +136,13 @@ listed here — only features (MINOR) and notable fixes. Format follows
 
 ## statusline
 
+### 0.2.1 — 2026-10-20
+- **A second Claude Code profile shows its own account.** With
+  `CLAUDE_CONFIG_DIR` set (say, a work profile with its own login), the first
+  line showed the default profile's account, because the renderer always read
+  `~/.claude.json`. It now reads `.claude.json` from `CLAUDE_CONFIG_DIR` when
+  that is set, as Claude Code itself does.
+
 ### 0.2.0 — 2026-09-29
 - **The footer clock now keeps moving.** The recommended `statusLine` setting
   carries `"refreshInterval": 5`, so the line re-renders every 5 seconds instead

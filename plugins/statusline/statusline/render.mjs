@@ -238,11 +238,15 @@ function readStdin() {
 }
 
 // The authenticated Claude account is not in the statusline JSON — read it from
-// ~/.claude.json. Best-effort: any failure yields "?".
+// ~/.claude.json. Claude Code moves that file into CLAUDE_CONFIG_DIR when the
+// variable is set (one login per config dir), and the renderer inherits the
+// session's env, so honor it or a second profile shows the default account.
+// Best-effort: any failure yields "?".
 /** @returns {string} */
 function loadUser() {
   try {
-    const cfg = JSON.parse(readFileSync(join(homedir(), ".claude.json"), "utf8"));
+    const base = process.env.CLAUDE_CONFIG_DIR || homedir();
+    const cfg = JSON.parse(readFileSync(join(base, ".claude.json"), "utf8"));
     return (cfg.oauthAccount && cfg.oauthAccount.emailAddress) || deepFind(cfg, "emailAddress") || "?";
   } catch {
     return "?";
